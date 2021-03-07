@@ -15,6 +15,12 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    super.initState();
+    print("welcome page");
+  }
+
   Widget _submitButton() {
     return InkWell(
       onTap: () {
