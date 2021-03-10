@@ -42,7 +42,7 @@ class _WelcomePageState extends State<WelcomePage> {
             ],
             color: Colors.white),
         child: Text(
-          'دخول',
+          'Login',
           style: TextStyle(
               fontSize: 25,
               color: Colors.blue[300],

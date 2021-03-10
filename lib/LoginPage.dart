@@ -1,5 +1,9 @@
+import 'package:elearning_project/HomePageStudent.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'HomePageTeacher.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPageState createState() => LoginPageState();
@@ -8,14 +12,8 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   String logintype;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _usernameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _nameController = new TextEditingController();
-  String _email;
-  String _password;
-  String _displayName;
-  bool _obsecure = false;
 
   Widget _input(
       Icon icon, String hint, TextEditingController controller, bool obsecure) {
@@ -24,7 +22,7 @@ class LoginPageState extends State<LoginPage> {
       child: TextField(
         controller: controller,
         obscureText: obsecure,
-        textAlign: TextAlign.right,
+        textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 20,
         ),
@@ -48,7 +46,7 @@ class LoginPageState extends State<LoginPage> {
                 width: 3,
               ),
             ),
-            suffixIcon: Padding(
+            prefixIcon: Padding(
               child: IconTheme(
                 data: IconThemeData(
                   color: Colors.blue[300],
@@ -83,14 +81,124 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future getData(String username, String password, String logintype) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/login.php';
+    print("the data is");
+
+    print(username);
+    print(password);
+    print(logintype);
+
+    var response = await http.post(url, body: {
+      "userid": username,
+      "password": password,
+      "logintype": logintype,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+    if (res == 'Login Successfully') {
+      print("from static dta");
+      if (logintype == 'Student') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => new HomePageStudent()));
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => new HomePageTeacher()));
+      }
+    } else {
+      print("must go to Home page");
+      showAlertDialog(context);
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Wrong information!!",
+        // textAlign: TextAlign.justify,
+        // textDirection: TextDirection.rtl,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Kindly verify the information that you entered."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showAlertDialog1(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "Ok",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Missing information!!",
+        //  textAlign: TextAlign.justify,
+        //textDirection: TextDirection.rtl,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Kindly check that you fill all the required information."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   void _loginUser() {
-    _email = _usernameController.text;
-    _password = _passwordController.text;
-    _usernameController.clear();
-    _passwordController.clear();
-    //HomePageSeller
-    // Navigator.push(
-    //     context, MaterialPageRoute(builder: (context) => new HomePageSeller()));
+//    _usernameController.clear();
+    //  _passwordController.clear();
+
+    if (_usernameController.text == '' ||
+        _passwordController.text == '' ||
+        logintype == '') {
+      showAlertDialog1(context);
+    } else {
+      getData(_usernameController.text.trim(), _passwordController.text.trim(),
+          logintype);
+    }
   }
 
   @override
@@ -112,7 +220,7 @@ class LoginPageState extends State<LoginPage> {
         ),
         backgroundColor: Colors.blue[300],
         title: new Text(
-          "تسجيل الدخول",
+          "Login page",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -159,12 +267,12 @@ class LoginPageState extends State<LoginPage> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(bottom: 15, top: 40),
-                        child: _input(Icon(Icons.person), "اسم المستخدم",
+                        child: _input(Icon(Icons.person), "UserId",
                             _usernameController, false),
                       ),
                       Padding(
                         padding: EdgeInsets.only(bottom: 15),
-                        child: _input(Icon(Icons.lock), "كلمة المرور",
+                        child: _input(Icon(Icons.lock), "Password",
                             _passwordController, true),
                       ),
                       Padding(
@@ -172,9 +280,9 @@ class LoginPageState extends State<LoginPage> {
                           bottom: 15,
                         ),
                         child: Container(
-                          padding: EdgeInsets.only(
-                            left: 60,
-                          ),
+                          // padding: EdgeInsets.only(
+                          //   left: 60,
+                          // ),
                           decoration: ShapeDecoration(
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
@@ -191,7 +299,7 @@ class LoginPageState extends State<LoginPage> {
                               value: logintype,
                               dropdownColor: Colors.white,
                               //         isExpanded: true,
-                              items: <String>['أستاذ جامعة', 'طالب']
+                              items: <String>['Student', 'Teacher']
                                   .map((String value) {
                                 return new DropdownMenuItem<String>(
                                   value: value,
@@ -223,8 +331,8 @@ class LoginPageState extends State<LoginPage> {
                             right: 20,
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Container(
-                          child: _button("دخول", Colors.white, primary, primary,
-                              Colors.white, _loginUser),
+                          child: _button("Login", Colors.white, primary,
+                              primary, Colors.white, _loginUser),
                           height: 50,
                           width: MediaQuery.of(context).size.width,
                         ),
