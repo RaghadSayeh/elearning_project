@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: Colors.blue[300],
+        backgroundColor: Theme.of(context).primaryColor,
         title: new Text(
           "Settings Page",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

@@ -1,9 +1,10 @@
-import 'package:elearning_project/HomePageStudent.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'HomePageTeacher.dart';
+import 'MainHomePage.dart';
+import 'UserDta.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPageState createState() => LoginPageState();
@@ -100,18 +101,20 @@ class LoginPageState extends State<LoginPage> {
     print(json.decode(response.body));
 
     final res = json.decode(response.body);
-    if (res == 'Login Successfully') {
+    if (res == 'Try Again') {
+      print("login failed");
+      showAlertDialog(context);
+    } else {
       print("from static dta");
+      print(res[0]['username']);
+      UserDta.username = res[0]['username'];
       if (logintype == 'Student') {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => new HomePageStudent()));
+            MaterialPageRoute(builder: (context) => new MainHomePage()));
       } else {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => new HomePageTeacher()));
       }
-    } else {
-      print("must go to Home page");
-      showAlertDialog(context);
     }
   }
 
