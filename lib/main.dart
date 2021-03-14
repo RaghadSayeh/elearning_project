@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-          hintColor: Colors.cyan[200],
-          primaryColor: Colors.cyan[300],
+          hintColor: Colors.cyan[200], //
+          primaryColor: Colors.indigo[800],
           canvasColor: Colors.transparent),
       home: SplashScreen(),
     );
@@ -46,7 +46,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue[300],
+      color: Theme.of(context).primaryColor,
       child: Scaffold(
         //backgroundColor: Colors.transparent,
         body: Center(
@@ -61,7 +61,7 @@ class SplashScreenState extends State<SplashScreen> {
               ),
             ),
             SizedBox(
-              height: 60,
+              height: 70,
             ),
             Container(
               child: new Text("Learno",

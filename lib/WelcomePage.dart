@@ -4,6 +4,11 @@ import 'bezierContainer.dart';
 import 'bezierContainer1.dart';
 import 'LoginPage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'MainHomePage.dart';
+import 'HomePageTeacher.dart';
+import 'UserDta.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
@@ -15,91 +20,148 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  TextEditingController useridContr = TextEditingController();
+  TextEditingController passController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     print("welcome page");
   }
 
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Wrong information!!",
+        // textAlign: TextAlign.justify,
+        // textDirection: TextDirection.rtl,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Kindly verify the information that you entered."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Future getData(String username, String password) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/login.php';
+    print("the data is");
+
+    print(username);
+    print(password);
+
+    var response = await http.post(url, body: {
+      "userid": username,
+      "password": password,
+      // "logintype": logintype,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+    if (res == 'Try Again') {
+      print("login failed");
+      showAlertDialog(context);
+    } else {
+      print("from static dta");
+      print(res[0]['username']);
+      print(res[0]['logintype']);
+      UserDta.username = res[0]['username'];
+      UserDta.logintype = res[0]['logintype'];
+
+      if (UserDta.logintype == 'Student') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => new MainHomePage()));
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => new HomePageTeacher()));
+      }
+    }
+  }
+
   Widget _submitButton() {
+    return InkWell(
+      onTap: () {
+        getData(useridContr.text.trim(), passController.text.trim());
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+        //   width: MediaQuery.of(context).size.width * 0.7,
+        height: 60,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Theme.of(context).primaryColor,
+                  offset: Offset(2, 4),
+                  blurRadius: 6,
+                  spreadRadius: 1)
+            ],
+            color: Theme.of(context).primaryColor),
+        child: Text(
+          'Login',
+          style: TextStyle(
+              fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _submitButton1() {
     return InkWell(
       onTap: () {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
       },
       child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 13),
+        margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+        //  width: MediaQuery.of(context).size.width * 0.7,
+        height: 60,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(25)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                  color: Colors.white.withAlpha(100),
+                  color: Theme.of(context).primaryColor,
                   offset: Offset(2, 4),
-                  blurRadius: 8,
-                  spreadRadius: 2)
+                  blurRadius: 6,
+                  spreadRadius: 1)
             ],
             color: Colors.white),
         child: Text(
-          'Login',
+          'Register',
           style: TextStyle(
               fontSize: 25,
-              color: Colors.blue[300],
+              color: Theme.of(context).primaryColor,
               fontWeight: FontWeight.bold),
         ),
       ),
     );
-  }
-
-  Widget _signUpButton() {
-    return InkWell(
-      onTap: () {
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => SignUpPage()));
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 13),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Colors.white, width: 2),
-        ),
-        child: Text(
-          'Register now',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _label() {
-    return Container(
-        margin: EdgeInsets.only(top: 40, bottom: 20),
-        child: Column(
-          children: <Widget>[
-            Text(
-              'Quick login with Touch ID',
-              style: TextStyle(color: Colors.white, fontSize: 17),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Icon(Icons.fingerprint, size: 90, color: Colors.white),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Touch ID',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ],
-        ));
   }
 
   Widget _title() {
@@ -109,21 +171,15 @@ class _WelcomePageState extends State<WelcomePage> {
           text: 'l',
           style: GoogleFonts.pacifico(
             fontSize: 100,
-            color: Colors.white,
+            color: Theme.of(context).primaryColor,
             shadows: [
               Shadow(
                 blurRadius: 150.0,
-                color: Colors.white,
+                color: Theme.of(context).primaryColor,
                 // offset: Offset(5.0, 5.0),
               ),
             ],
           ),
-          // TextStyle(
-          //   //    textStyle: Theme.of(context).textTheme.display1,
-          //   fontSize: 30,
-          //   fontWeight: FontWeight.w700,
-          //   color: Colors.white,
-          // ),
           children: [
             TextSpan(
               text: 'ea',
@@ -131,58 +187,162 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
             TextSpan(
               text: 'rno',
-              style: TextStyle(color: Colors.white, fontSize: 30),
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor, fontSize: 30),
             ),
           ]),
     );
   }
 
+  void rememberMe() async {}
+
   int state = 1;
+  bool remember = false;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Container(
-          color: Colors.blue[300],
+        backgroundColor: Colors.white,
+        body: Container(
           height: height,
-          child: Stack(children: <Widget>[
-            Positioned(
-                top: -height * .15,
-                right: -MediaQuery.of(context).size.width * .4,
-                child: BezierContainer()),
-            Container(
-              // color: Colors.blue[300],
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    SizedBox(height: 70),
-                    _submitButton(),
-                  ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 10),
+                _title(),
+                Container(
+                    height: 50,
+                    margin: EdgeInsets.fromLTRB(13, 5, 15, 5),
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: new Text(
+                      "Welcome again!!",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          color: Theme.of(context).primaryColor),
+                    )),
+                SizedBox(height: 5),
+                Container(
+                  margin: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: new Text(
+                    "Your user_id",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              //  left: 0,
-              //  right: 100,
-              child: ClipPath(
-                clipper: MyWaveClipper(), //applying our custom clipper
-                child: Container(
-                  color: Colors.white,
-                  width: 800,
-                  height: 200,
+                Container(
+                  margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                  //     width: MediaQuery.of(context).size.width * 0.7,
+                  child: new TextFormField(
+                    controller: useridContr,
+                    decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue[300]),
+                        // hintText: hint,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        prefixIcon: Padding(
+                          child: IconTheme(
+                            data: IconThemeData(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: Icon(Icons.person),
+                          ),
+                          padding: EdgeInsets.only(left: 10, right: 30),
+                        )),
+                  ),
                 ),
-                //),
-              ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: new Text(
+                    "Your password",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                  //  width: MediaQuery.of(context).size.width * 0.7,
+                  child: new TextFormField(
+                    obscureText: true,
+                    controller: passController,
+                    decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue[300]),
+                        // hintText: hint,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        prefixIcon: Padding(
+                          child: IconTheme(
+                            data: IconThemeData(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: Icon(Icons.lock),
+                          ),
+                          padding: EdgeInsets.only(left: 10, right: 30),
+                        )),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                  child: Row(
+                    children: [
+                      Checkbox(
+                          value: remember,
+                          onChanged: (value) {
+                            setState(() {
+                              remember = !remember;
+                            });
+                          }),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      new Text(
+                        "Remember me",
+                        style: new TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+                _submitButton(),
+                _submitButton1(),
+              ],
             ),
-
-            //     new BezierContainer1(state)),
-          ])),
-    );
+          ),
+        ));
   }
 }
