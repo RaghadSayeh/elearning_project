@@ -118,16 +118,16 @@ class LoginPageState extends State<LoginPage> {
           context, MaterialPageRoute(builder: (context) => new WelcomePage()));
     } else {
       showAlertDialog(context);
-      // print("from static dta");
-      // print(res[0]['username']);
-      // UserDta.username = res[0]['username'];
-      // if (logintype == 'Student') {
-      //   Navigator.push(context,
-      //       MaterialPageRoute(builder: (context) => new MainHomePage()));
-      // } else {
-      //   Navigator.push(context,
-      //       MaterialPageRoute(builder: (context) => new HomePageTeacher()));
-      // }
+      print("from static dta");
+      print(res[0]['username']);
+      UserDta.username = res[0]['username'];
+      if (logintype == 'Student') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => new MainHomePage()));
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => new HomePageTeacher()));
+      }
     }
   }
 

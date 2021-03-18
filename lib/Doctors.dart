@@ -1,20 +1,69 @@
+import 'package:elearning_project/MeetingDetail.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'DoctorList.dart';
 import 'DoctorData.dart';
+import 'package:contacts_service/contacts_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'ScheduleMeeting.dart';
+import 'MeetingData.dart';
 
 class Doctors extends StatefulWidget {
   _DoctorsState createState() => _DoctorsState();
 }
 
 class _DoctorsState extends State<Doctors> {
+  //final PermissionHandler _permissionHandler = PermissionHandler();
+
   @override
   void initState() {
     super.initState();
+    //_askPermissions();
     getData();
   }
+
+  Future<void> _askPermissions() async {
+    PermissionStatus permissionStatus = await _getContactPermission();
+    if (permissionStatus != PermissionStatus.granted) {
+      // _handleInvalidPermissions(permissionStatus);
+      //await PermissionH
+    }
+  }
+
+  Future<PermissionStatus> _getContactPermission() async {
+    if (await Permission.contacts.request().isGranted) {
+      // Either the permission was already granted before or the user just granted it.
+    } else {
+      // await request
+      //  Map<PermissionG
+    }
+  }
+
+  void makeCall(String telno) async {
+//"tel:$telephoneNumber"
+    String url = ("tel:" + telno).trim();
+    print("the url is:");
+    print(url);
+    if (await canLaunch(url)) {
+      await launch(url, forceSafariVC: false);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void addToContact(Contact c) {
+    try {
+      ContactsService.addContact(c);
+    } catch (e) {
+      print("catch inside addtocontact");
+      print(e.toString());
+    }
+  }
+
+  void scheduleNewMeeting() {}
 
   //Failed to get Doctors
   Future getData() async {
@@ -233,8 +282,18 @@ class _DoctorsState extends State<Doctors> {
                                             EdgeInsets.only(top: 10, bottom: 5),
                                         child: GestureDetector(
                                           onTap: () {
-                                            print(
-                                                "Join meeting feature will be implemented later");
+                                            print("add to contacts");
+                                            // Contact con = new Contact(
+                                            //     phones: [
+                                            //       Item(
+                                            //           label: "mobile",
+                                            //           value: DoctorList
+                                            //               .doclist[index]
+                                            //               .phoneNo)
+                                            //     ],
+                                            //     givenName: DoctorList
+                                            //         .doclist[index].username);
+                                            // ContactsService.addContact(con);
                                           },
                                           child: Icon(Icons.person_add),
                                         )),
@@ -246,8 +305,11 @@ class _DoctorsState extends State<Doctors> {
                                             EdgeInsets.only(top: 10, bottom: 5),
                                         child: GestureDetector(
                                           onTap: () {
-                                            print(
-                                                "Join meeting feature will be implemented later");
+                                            print("call the doctor");
+                                            // canLaunch(DoctorList
+                                            //   .doclist[index].phoneNo);
+                                            makeCall(DoctorList
+                                                .doclist[index].phoneNo);
                                           },
                                           child: Icon(Icons.call),
                                         )),
@@ -259,8 +321,18 @@ class _DoctorsState extends State<Doctors> {
                                             EdgeInsets.only(top: 10, bottom: 5),
                                         child: GestureDetector(
                                           onTap: () {
-                                            print(
-                                                "Join meeting feature will be implemented later");
+                                            print("schedule new meeting");
+                                            MeetingDetail.drname = DoctorList
+                                                .doclist[index].username;
+                                            MeetingDetail.email =
+                                                DoctorList.doclist[index].email;
+                                            MeetingDetail.phoneno = DoctorList
+                                                .doclist[index].phoneNo;
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        new ScheduleMeeting()));
                                           },
                                           child: Icon(Icons.add_box),
                                         )),

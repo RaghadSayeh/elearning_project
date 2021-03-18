@@ -13,6 +13,8 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    print("the dateTime is");
+    print(DateTime.now());
   }
 
   Widget profileView() {

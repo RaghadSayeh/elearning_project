@@ -78,9 +78,9 @@ class _WelcomePageState extends State<WelcomePage> {
       // "logintype": logintype,
     });
 
-    print("status code is");
-    print(response.statusCode);
-    print(json.decode(response.body));
+    // print("status code is");
+    // print(response.statusCode);
+    // print(json.decode(response.body));
 
     final res = json.decode(response.body);
     if (res == 'Try Again') {
@@ -92,7 +92,7 @@ class _WelcomePageState extends State<WelcomePage> {
       print(res[0]['logintype']);
       UserDta.username = res[0]['username'];
       UserDta.logintype = res[0]['logintype'];
-
+      UserDta.userid = username;
       if (UserDta.logintype == 'Student') {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => new MainHomePage()));
