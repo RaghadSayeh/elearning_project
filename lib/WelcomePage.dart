@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'bezierContainer.dart';
-import 'bezierContainer1.dart';
 import 'LoginPage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
@@ -9,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'MainHomePage.dart';
 import 'HomePageTeacher.dart';
 import 'UserDta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'LoginData.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
@@ -20,13 +20,25 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  TextEditingController useridContr = TextEditingController();
-  TextEditingController passController = TextEditingController();
+  String username = "";
+  String pass = "";
 
+  TextEditingController useridContr =
+      TextEditingController(text: LoginData.username);
+  TextEditingController passController =
+      TextEditingController(text: LoginData.pass);
+  SharedPreferences sh;
   @override
   void initState() {
     super.initState();
     print("welcome page");
+    loadData();
+  }
+
+  void loadData() async {
+    sh = await SharedPreferences.getInstance();
+    username = sh.getString("username");
+    pass = sh.getString("pass");
   }
 
   showAlertDialog(BuildContext context) {
@@ -78,12 +90,12 @@ class _WelcomePageState extends State<WelcomePage> {
       // "logintype": logintype,
     });
 
-    // print("status code is");
+    print("status code is");
     // print(response.statusCode);
-    // print(json.decode(response.body));
+    print(json.decode(response.body));
 
     final res = json.decode(response.body);
-    if (res == 'Try Again') {
+    if (res == 'Try Again' || res == []) {
       print("login failed");
       showAlertDialog(context);
     } else {
@@ -319,10 +331,25 @@ class _WelcomePageState extends State<WelcomePage> {
                   child: Row(
                     children: [
                       Checkbox(
-                          value: remember,
+                          value: LoginData.checked,
                           onChanged: (value) {
                             setState(() {
-                              remember = !remember;
+                              LoginData.checked = !LoginData.checked;
+                              if (LoginData.checked) {
+                                sh.setString("username", useridContr.text);
+                                sh.setString("pass", passController.text);
+                                sh.setBool("checked", LoginData.checked);
+                                LoginData.username = useridContr.text;
+                                LoginData.pass = passController.text;
+                                LoginData.checked = LoginData.checked;
+                              } else {
+                                sh.remove("username");
+                                sh.remove("pass");
+                                sh.remove("checked");
+                                LoginData.username = "";
+                                LoginData.pass = "";
+                                LoginData.checked = false;
+                              }
                             });
                           }),
                       SizedBox(

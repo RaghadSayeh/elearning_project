@@ -74,6 +74,11 @@ class MainHomePageState extends State<MainHomePage> {
           automaticallyImplyLeading: false,
           //  centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
+            ),
+          ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -176,7 +181,14 @@ class MainHomePageState extends State<MainHomePage> {
                   ));
             }),
           )),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar:
+          //  ClipRRect(
+          //   borderRadius: BorderRadius.only(
+          //     topLeft: Radius.circular(30.0),
+          //     topRight: Radius.circular(30.0),
+          //   ),
+          //   child:
+          BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
@@ -208,6 +220,7 @@ class MainHomePageState extends State<MainHomePage> {
               icon: Icon(Icons.logout), title: Text('Logout'))
         ],
       ),
+      // )
     );
   }
 }

@@ -1,13 +1,13 @@
+import 'package:elearning_project/LoginData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'WelcomePage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'RememberData.dart';
 
 void main() {
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-  //   .then((_) {
   runApp(new MyApp());
-  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -32,15 +32,34 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  SharedPreferences sh;
+  String username;
+  String pass;
+  bool checked = false;
   @override
   void initState() {
     super.initState();
+    loadSettings();
     Future.delayed(const Duration(seconds: 4), () {
       setState(() {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => new WelcomePage()));
       });
     });
+  }
+
+  void loadSettings() async {
+    sh = await SharedPreferences.getInstance();
+    username = sh.getString("username") ?? "";
+    pass = sh.getString("pass") ?? "";
+    checked = sh.getBool("checked") ?? false;
+    print("load settings data");
+    print(username);
+    print(pass);
+    print(checked);
+    LoginData.username = username;
+    LoginData.pass = pass;
+    LoginData.checked = checked;
   }
 
   @override

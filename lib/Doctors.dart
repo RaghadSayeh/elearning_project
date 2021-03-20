@@ -10,6 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'ScheduleMeeting.dart';
 import 'MeetingData.dart';
+import 'CourseData.dart';
+import 'CoursesList.dart';
+import 'UserDta.dart';
 
 class Doctors extends StatefulWidget {
   _DoctorsState createState() => _DoctorsState();
@@ -21,29 +24,65 @@ class _DoctorsState extends State<Doctors> {
   @override
   void initState() {
     super.initState();
-    //_askPermissions();
+    _askPermissions();
     getData();
   }
 
-  Future<void> _askPermissions() async {
-    PermissionStatus permissionStatus = await _getContactPermission();
-    if (permissionStatus != PermissionStatus.granted) {
-      // _handleInvalidPermissions(permissionStatus);
-      //await PermissionH
+  Future getCourses() async {
+    CourseList.cl = new List();
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getStudentCourses.php';
+    print("the data is");
+
+    var response = await http.post(url, body: {"StudentId": UserDta.userid});
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to Student get Courses') {
+      print("Failed to Student get Courses");
+    } else {
+      print(" Student get Courses successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String drname = doclist['drname'];
+        String course = doclist['course'];
+        String day = doclist['day'];
+        String coursetime = doclist['coursetime'];
+        String officehrs = doclist['officehrs'];
+
+        CourseData cd = new CourseData();
+        cd.drname = drname;
+        cd.coursename = course;
+        cd.courseday = day;
+        cd.coursetime = coursetime;
+        cd.drofficehrs = officehrs;
+
+        CourseList.cl.add(cd);
+        print("student course length is");
+        print(CourseList.cl.length.toString());
+      }
+      setState(() {});
     }
   }
 
-  Future<PermissionStatus> _getContactPermission() async {
-    if (await Permission.contacts.request().isGranted) {
-      // Either the permission was already granted before or the user just granted it.
+  Future<void> _askPermissions() async {
+    PermissionStatus nn = await Permission.contacts.status;
+    print("permission status is:");
+    if (nn.isGranted) {
+      print("the contact permission is granted");
     } else {
-      // await request
-      //  Map<PermissionG
+      print("the permission is not granted");
+      await Permission.contacts.request();
     }
   }
 
   void makeCall(String telno) async {
-//"tel:$telephoneNumber"
     String url = ("tel:" + telno).trim();
     print("the url is:");
     print(url);
@@ -283,17 +322,17 @@ class _DoctorsState extends State<Doctors> {
                                         child: GestureDetector(
                                           onTap: () {
                                             print("add to contacts");
-                                            // Contact con = new Contact(
-                                            //     phones: [
-                                            //       Item(
-                                            //           label: "mobile",
-                                            //           value: DoctorList
-                                            //               .doclist[index]
-                                            //               .phoneNo)
-                                            //     ],
-                                            //     givenName: DoctorList
-                                            //         .doclist[index].username);
-                                            // ContactsService.addContact(con);
+                                            Contact con = new Contact(
+                                                phones: [
+                                                  Item(
+                                                      label: "mobile",
+                                                      value: DoctorList
+                                                          .doclist[index]
+                                                          .phoneNo)
+                                                ],
+                                                givenName: DoctorList
+                                                    .doclist[index].username);
+                                            ContactsService.addContact(con);
                                           },
                                           child: Icon(Icons.person_add),
                                         )),
@@ -335,6 +374,18 @@ class _DoctorsState extends State<Doctors> {
                                                         new ScheduleMeeting()));
                                           },
                                           child: Icon(Icons.add_box),
+                                        )),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                        padding:
+                                            EdgeInsets.only(top: 10, bottom: 5),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            print("view doctor schedule");
+                                          },
+                                          child: Icon(Icons.view_agenda),
                                         )),
                                   ],
                                 )),
