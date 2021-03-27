@@ -36,6 +36,13 @@ dependencies:
   permission_handler:
   flutter_datetime_picker: ^1.5.0
   shared_preferences: ^0.5.10
+  sliding_card: ^0.1.2
+  fl_chart: ^0.8.2
+  bubble_tab_indicator: ^0.1.4
+  expansion_card: ^0.1.0
+  flutter_calendar_carousel: ^1.5.2
+
+
 
 
 

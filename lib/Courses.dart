@@ -262,10 +262,10 @@ class _CoursesState extends State<Courses> {
     );
   }
 
-  Widget _buildFoodItem(
-      String imgPath, String foodName, String price, String tt, String ss) {
+  Widget _buildFoodItem(String imgPath, String coursename, String drname,
+      String courseday, String coursetime) {
     return Padding(
-        padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+        padding: EdgeInsets.only(left: 10.0, right: 5.0, top: 10.0),
         child: InkWell(
             onTap: () {
               // Navigator.of(context).push(MaterialPageRoute(
@@ -284,21 +284,21 @@ class _CoursesState extends State<Courses> {
                           fit: BoxFit.cover,
                           height: 75.0,
                           width: 75.0)),
-                  SizedBox(width: 10.0),
+                  SizedBox(width: 5.0),
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(foodName,
+                        Text(coursename,
                             style: TextStyle(
                                 //   fontFamily: 'Montserrat',
                                 fontSize: 19.0,
                                 fontWeight: FontWeight.bold)),
-                        Text(price,
+                        Text(drname,
                             style: TextStyle(
                                 //  fontFamily: 'Montserrat',
                                 fontSize: 15.0,
                                 color: Colors.grey)),
-                        Text(tt,
+                        Text(courseday,
                             style: TextStyle(
                                 //  fontFamily: 'Montserrat',
                                 fontSize: 15.0,
@@ -306,7 +306,7 @@ class _CoursesState extends State<Courses> {
                       ])
                 ])),
                 new Text(
-                  ss,
+                  coursetime,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 )
               ],

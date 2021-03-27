@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'WelcomePage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'RememberData.dart';
+import 'Growth.dart';
+import 'StudentResults.dart';
 
 void main() {
   runApp(new MyApp());
@@ -42,8 +44,11 @@ class SplashScreenState extends State<SplashScreen> {
     loadSettings();
     Future.delayed(const Duration(seconds: 4), () {
       setState(() {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => new WelcomePage()));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                //Growth   Results
+                builder: (context) => new WelcomePage())); //WelcomePage
       });
     });
   }

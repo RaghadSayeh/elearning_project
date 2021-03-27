@@ -16,6 +16,7 @@ class LoginPageState extends State<LoginPage> {
 
   TextEditingController _usernameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _confpasswordController = new TextEditingController();
   TextEditingController _emailCont = new TextEditingController();
   TextEditingController _phoneNoDoctor = new TextEditingController();
   TextEditingController _userid = new TextEditingController();
@@ -204,6 +205,41 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
+  showAlertDialog2(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "Ok",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Verify passwords!!",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+          "Kindly check that your password equal your confirmed password."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   void _loginUser() {
     if (_usernameController.text == '' ||
         _passwordController.text == '' ||
@@ -214,13 +250,17 @@ class LoginPageState extends State<LoginPage> {
         showAlertDialog1(context);
       }
     } else {
-      getData(
-          _usernameController.text.trim(),
-          _passwordController.text.trim(),
-          logintype,
-          _emailCont.text,
-          _userid.text.trim(),
-          _phoneNoDoctor.text.trim());
+      if (_passwordController.text != _confpasswordController.text) {
+        showAlertDialog2(context);
+      } else {
+        getData(
+            _usernameController.text.trim(),
+            _passwordController.text.trim(),
+            logintype,
+            _emailCont.text,
+            _userid.text.trim(),
+            _phoneNoDoctor.text.trim());
+      }
     }
 
 // _usernameController.text.trim(), _passwordController.text.trim(),
@@ -407,6 +447,45 @@ class LoginPageState extends State<LoginPage> {
                     controller: _passwordController,
                     decoration: InputDecoration(
                         hintText: "Password",
+                        hintStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        // hintText: hint,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        prefixIcon: Padding(
+                          child: IconTheme(
+                            data: IconThemeData(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: Icon(Icons.lock),
+                          ),
+                          padding: EdgeInsets.only(left: 10, right: 30),
+                        )),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                  //  width: MediaQuery.of(context).size.width * 0.7,
+                  child: new TextFormField(
+                    obscureText: true,
+                    controller: _confpasswordController,
+                    decoration: InputDecoration(
+                        hintText: "Confirm your password",
                         hintStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,

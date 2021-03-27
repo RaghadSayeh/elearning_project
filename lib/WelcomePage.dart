@@ -58,8 +58,6 @@ class _WelcomePageState extends State<WelcomePage> {
     AlertDialog alert = AlertDialog(
       title: Text(
         "Wrong information!!",
-        // textAlign: TextAlign.justify,
-        // textDirection: TextDirection.rtl,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       content: Text("Kindly verify the information that you entered."),
@@ -67,7 +65,6 @@ class _WelcomePageState extends State<WelcomePage> {
         okButton,
       ],
     );
-
     // show the dialog
     showDialog(
       context: context,
@@ -91,8 +88,8 @@ class _WelcomePageState extends State<WelcomePage> {
     });
 
     print("status code is");
-    // print(response.statusCode);
-    print(json.decode(response.body));
+     print(response.statusCode);
+    // print(json.decode(response.body));
 
     final res = json.decode(response.body);
     if (res == 'Try Again' || res == []) {
@@ -100,10 +97,10 @@ class _WelcomePageState extends State<WelcomePage> {
       showAlertDialog(context);
     } else {
       print("from static dta");
-      print(res[0]['username']);
-      print(res[0]['logintype']);
-      UserDta.username = res[0]['username'];
-      UserDta.logintype = res[0]['logintype'];
+      print(res['username']);
+      print(res['logintype']);
+      UserDta.username = res['username'];
+      UserDta.logintype = res['logintype'];
       UserDta.userid = username;
       if (UserDta.logintype == 'Student') {
         Navigator.push(context,

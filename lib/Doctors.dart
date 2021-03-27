@@ -13,6 +13,10 @@ import 'MeetingData.dart';
 import 'CourseData.dart';
 import 'CoursesList.dart';
 import 'UserDta.dart';
+import 'DoctorTable.dart';
+import 'DoctorsTabList.dart';
+import 'DoctorTableView.dart';
+import 'DoctorIndo.dart';
 
 class Doctors extends StatefulWidget {
   _DoctorsState createState() => _DoctorsState();
@@ -28,13 +32,14 @@ class _DoctorsState extends State<Doctors> {
     getData();
   }
 
-  Future getCourses() async {
-    CourseList.cl = new List();
+  Future getDoctorTable() async {
+    DoctorsTabList.dl = new List();
     var url =
-        'https://crenelate-intervals.000webhostapp.com/getStudentCourses.php';
+        'https://crenelate-intervals.000webhostapp.com/getDoctorSchedule.php';
     print("the data is");
 
-    var response = await http.post(url, body: {"StudentId": UserDta.userid});
+    var response = await http.post(url,
+        body: {"drname": UserDta.userid}); //must pass here doctor name
 
     print("status code is");
     print(response.statusCode);
@@ -42,30 +47,26 @@ class _DoctorsState extends State<Doctors> {
 
     final res = json.decode(response.body);
 
-    if (res == 'Failed to Student get Courses') {
-      print("Failed to Student get Courses");
+    if (res == 'failed to get doctor schedule') {
+      print("failed to get doctor schedule");
     } else {
-      print(" Student get Courses successfully");
+      print("get doctor schedule successfully");
 
       List<dynamic> jsonObj = res;
       for (int i = 0; i < jsonObj.length; i++) {
         Map<String, dynamic> doclist = jsonObj[i];
-        String drname = doclist['drname'];
+        String officehrs = doclist['officehrs'];
         String course = doclist['course'];
         String day = doclist['day'];
         String coursetime = doclist['coursetime'];
-        String officehrs = doclist['officehrs'];
 
-        CourseData cd = new CourseData();
-        cd.drname = drname;
+        DoctorTable cd = new DoctorTable();
+        cd.officehrs = officehrs;
         cd.coursename = course;
         cd.courseday = day;
-        cd.coursetime = coursetime;
-        cd.drofficehrs = officehrs;
+        cd.courseTime = coursetime;
 
-        CourseList.cl.add(cd);
-        print("student course length is");
-        print(CourseList.cl.length.toString());
+        DoctorsTabList.dl.add(cd);
       }
       setState(() {});
     }
@@ -194,28 +195,7 @@ class _DoctorsState extends State<Doctors> {
                               padding: const EdgeInsets.all(9.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  // Container(
-                                  //   width:
-                                  //       MediaQuery.of(context).size.width * .3,
-                                  //   child: Container(
-                                  //     //  width: 160,
-                                  //     //height: 150,
-                                  //     decoration: BoxDecoration(
-                                  //       border: Border.all(
-                                  //         color: Theme.of(context).primaryColor,
-                                  //       ),
-                                  //       //borderRadius: BorderRadius.all(Radius.circular(50))
-                                  //     ),
-                                  //     margin: EdgeInsets.fromLTRB(10, 2, 10, 5),
-                                  //     //  padding: EdgeInsets.all(2),
-                                  //     child: Image(
-                                  //       image: AssetImage('assets/33.png'),
-                                  //       fit: BoxFit.fill,
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                ],
+                                children: <Widget>[],
                               ),
                             ),
                             Container(
@@ -345,8 +325,6 @@ class _DoctorsState extends State<Doctors> {
                                         child: GestureDetector(
                                           onTap: () {
                                             print("call the doctor");
-                                            // canLaunch(DoctorList
-                                            //   .doclist[index].phoneNo);
                                             makeCall(DoctorList
                                                 .doclist[index].phoneNo);
                                           },
@@ -384,6 +362,13 @@ class _DoctorsState extends State<Doctors> {
                                         child: GestureDetector(
                                           onTap: () {
                                             print("view doctor schedule");
+                                            DoctorInfo.drname = DoctorList
+                                                .doclist[index].username;
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        new DoctorTableView()));
                                           },
                                           child: Icon(Icons.view_agenda),
                                         )),
@@ -391,9 +376,6 @@ class _DoctorsState extends State<Doctors> {
                                 )),
                           ],
                         ),
-
-                        //       ]
-                        //         )
                       ),
                     ),
                   )),
