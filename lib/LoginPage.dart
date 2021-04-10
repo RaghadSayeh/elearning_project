@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'HomePageTeacher.dart';
+import 'HomePageDoctor.dart';
 import 'MainHomePage.dart';
 import 'UserDta.dart';
 
@@ -127,7 +127,7 @@ class LoginPageState extends State<LoginPage> {
             MaterialPageRoute(builder: (context) => new MainHomePage()));
       } else {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => new HomePageTeacher()));
+            MaterialPageRoute(builder: (context) => new HomePageDoctor()));
       }
     }
   }

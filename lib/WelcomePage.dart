@@ -5,10 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'MainHomePage.dart';
-import 'HomePageTeacher.dart';
 import 'UserDta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'LoginData.dart';
+import 'HomePageDoctor.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
@@ -88,7 +88,7 @@ class _WelcomePageState extends State<WelcomePage> {
     });
 
     print("status code is");
-     print(response.statusCode);
+    print(response.statusCode);
     // print(json.decode(response.body));
 
     final res = json.decode(response.body);
@@ -107,7 +107,7 @@ class _WelcomePageState extends State<WelcomePage> {
             MaterialPageRoute(builder: (context) => new MainHomePage()));
       } else {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => new HomePageTeacher()));
+            MaterialPageRoute(builder: (context) => new HomePageDoctor()));
       }
     }
   }

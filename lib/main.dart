@@ -4,12 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'WelcomePage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'RememberData.dart';
-import 'Growth.dart';
-import 'StudentResults.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'body.dart';
 
 void main() {
-  runApp(new MyApp());
+  initializeDateFormatting().then((_) => runApp(new MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -99,14 +98,7 @@ class SplashScreenState extends State<SplashScreen> {
                         // offset: Offset(5.0, 5.0),
                       ),
                     ],
-                  )
-                  // TextStyle(
-                  //   color: Colors.white,
-                  //   fontSize: 40,
-
-                  //   //fontStyle: FontStyle.italic
-                  // ),
-                  ),
+                  )),
             )
           ],
         )),

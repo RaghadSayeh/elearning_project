@@ -5,12 +5,23 @@ import 'dart:convert';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+// Example holidays
+// final Map<DateTime, List> _holidays = {
+//   DateTime(2020, 1, 1): ['New Year\'s Day'],
+//   DateTime(2020, 1, 6): ['Epiphany'],
+//   DateTime(2020, 2, 14): ['Valentine\'s Day'],
+//   DateTime(2020, 4, 21): ['Easter Sunday'],
+//   DateTime(2020, 4, 22): ['Easter Monday'],
+// };
 
 class Vacations extends StatefulWidget {
   _VacationsState createState() => _VacationsState();
 }
 
-class _VacationsState extends State<Vacations> {
+class _VacationsState extends State<Vacations> with TickerProviderStateMixin {
   DateTime _currentDate = DateTime.now();
   DateTime _currentDate2 = DateTime.now();
   String _currentMonth = DateFormat.yMMM().format(DateTime.now());

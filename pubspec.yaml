@@ -41,6 +41,12 @@ dependencies:
   bubble_tab_indicator: ^0.1.4
   expansion_card: ^0.1.0
   flutter_calendar_carousel: ^1.5.2
+  table_calendar: ^2.3.3
+  flutter_svg: ^0.19.1
+  font_awesome_flutter: ^8.11.0
+
+
+
 
 
 
