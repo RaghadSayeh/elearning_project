@@ -1,12 +1,9 @@
 import 'package:elearning_project/DoctorMeetingsWithStu.dart';
 import 'package:elearning_project/DoctorSchedule.dart';
 import 'package:elearning_project/DoctorSlides.dart';
-import 'package:elearning_project/Vacations.dart';
 import 'package:flutter/material.dart';
 import 'WelcomePage.dart';
 import 'UserDta.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'MeetingData.dart';
 import 'MeetingList.dart';
 import 'WelcomePage.dart';
@@ -19,6 +16,7 @@ import 'CoursesRegDoc.dart';
 import 'DoctorResults.dart';
 import 'DoctorProfile.dart';
 import 'hotel_home_screen.dart';
+import 'DoctorExams.dart';
 
 class HomePageDoctor extends StatefulWidget {
   _HomePageDoctorState createState() => _HomePageDoctorState();
@@ -60,10 +58,10 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       //  resizeToAvoidBottomPadding: false,
       appBar: AppBar(
           automaticallyImplyLeading: false,
-          //  centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
@@ -124,12 +122,14 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => new DoctorLeavesVaca()));
+                              //DoctorLeavesVaca
+                              builder: (context) => new DoctorExams()));
                     } else if (index == 6) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => new Vacations()));
+                              //Vacations
+                              builder: (context) => new DoctorLeavesVaca()));
                     } else if (index == 7) {
                       Navigator.push(
                           context,

@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'WelcomePage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'body.dart';
+import 'testCC.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(new MyApp()));
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           hintColor: Colors.cyan[200], //
           primaryColor: Colors.indigo[800],
           canvasColor: Colors.transparent),
-      home: SplashScreen(),
+      home: SplashScreen(), //SplashScreen
     );
   }
 }

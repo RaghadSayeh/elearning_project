@@ -6,13 +6,13 @@ import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
 import 'HomePageDoctor.dart';
-import 'DoctorResultsStudentmark.dart';
 
-class DoctorResults extends StatefulWidget {
-  DoctorResultsState createState() => DoctorResultsState();
+class DoctorResultsStudentmark extends StatefulWidget {
+  DoctorResultsStudentmarkState createState() =>
+      DoctorResultsStudentmarkState();
 }
 
-class DoctorResultsState extends State<DoctorResults> {
+class DoctorResultsStudentmarkState extends State<DoctorResultsStudentmark> {
   @override
   void initState() {
     super.initState();
@@ -24,6 +24,24 @@ class DoctorResultsState extends State<DoctorResults> {
     'Communications Lab',
     'C++',
     'Java'
+  ];
+
+  List<String> students = [
+    'Amani Ali',
+    'Raghad Abd',
+    'Sara Ahmad',
+    'Kareem Mahdi',
+    'Kareem Fahmi',
+    'Fares Akram',
+    'Ansam Fathi',
+    'Aya Saeed',
+    'Reem Saleh',
+    'Hadeel Ashraf',
+    'Leena Khaled',
+    'Noor Nadi',
+    'Cerine Hadi',
+    'Omar Rami',
+    'Loai Mohammad'
   ];
 
   @override
@@ -54,7 +72,7 @@ class DoctorResultsState extends State<DoctorResults> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Fill student marks for each course ",
+              "Search for student and assign its marks",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
             Container(
@@ -75,7 +93,7 @@ class DoctorResultsState extends State<DoctorResults> {
                   //  SvgPicture.asset("assets/icons/search.svg"),
                   SizedBox(width: 16),
                   Text(
-                    "Search for course",
+                    "Search for student",
                     style: TextStyle(
                       fontSize: 18,
                       color: Color(0xFFA0A5BD),
@@ -84,55 +102,75 @@ class DoctorResultsState extends State<DoctorResults> {
                 ],
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 15),
             Expanded(
-              child: StaggeredGridView.countBuilder(
-                padding: EdgeInsets.all(0),
-                crossAxisCount: 2,
-                itemCount: courses.length,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                itemBuilder: (context, index) {
-                  return Column(children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    new DoctorResultsStudentmark()));
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        height: index.isEven ? 200 : 240,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          image: DecorationImage(
-                            image: AssetImage("assets/docres.png"),
-                            fit: BoxFit.fill,
+                child: new ListView.builder(
+                    itemCount: students.length,
+                    itemBuilder: (BuildContext ctxt, int Index) {
+                      return new ExpansionTile(
+                          trailing: Icon(
+                            Icons.arrow_drop_down,
+                            size: 32,
+                            color: Colors.indigo[800],
                           ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 18,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          courses[index],
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                          // style: kTitleTextStyle,
-                        ),
-                      ],
-                    ),
-                  ]);
-                },
-                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-              ),
-            ),
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  "First",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Text(
+                                  "Enter first mark",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    "Second",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  Text(
+                                    "Enter second mark",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ]),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    "Final",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  Text(
+                                    "Enter final mark",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ])
+                          ],
+                          onExpansionChanged: (value) {},
+                          title: Container(
+                            margin: EdgeInsets.all(6.0),
+                            padding: EdgeInsets.all(16.0),
+
+                            //  color: Colors.red,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                // color: Colors.red,
+                                borderRadius: new BorderRadius.circular(15.0),
+                                border: Border.all(color: Colors.indigo[800])),
+                            child: Text(
+                              students[Index],
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ));
+                    })),
           ],
         ),
       ),

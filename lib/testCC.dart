@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import 'package:intl/intl.dart' show DateFormat;
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/classes/event_list.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 List<Appointment> appointmentFromJson(String str) => List<Appointment>.from(
@@ -66,11 +62,13 @@ class Appointment {
       };
 }
 
-class Vacations extends StatefulWidget {
-  _VacationsState createState() => _VacationsState();
+class Appointments extends StatefulWidget {
+  @override
+  _AppointmentsState createState() => _AppointmentsState();
 }
 
-class _VacationsState extends State<Vacations> with TickerProviderStateMixin {
+class _AppointmentsState extends State<Appointments>
+    with TickerProviderStateMixin {
   var _calendarController;
   Map<DateTime, List> _events;
   List<Appointment> _samemonthevents = List<Appointment>();
@@ -182,37 +180,40 @@ class _VacationsState extends State<Vacations> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+      backgroundColor:Colors.white,
         appBar: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            backgroundColor: Theme.of(context).primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(30),
-              ),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
             ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                new Text(
-                  "Formal vacations",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ],
-            )),
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              new Text(
+                "My vacations",
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ],
+          )),
         body: Builder(builder: (BuildContext context) {
           return Column(children: <Widget>[
             _buildTableCalendarWithBuilders(),
             const SizedBox(height: 8.0),
             const SizedBox(height: 8.0),
+            //_buildEventList()
+            //_buildsameMonthEventList()
             Expanded(child: _buildsameMonthEventList()),
           ]);
         }));
   }
 
+  // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return TableCalendar(
       calendarController: _calendarController,
@@ -259,6 +260,7 @@ class _VacationsState extends State<Vacations> with TickerProviderStateMixin {
         todayDayBuilder: (context, date, _) {
           return Container(
             margin: const EdgeInsets.all(4.0),
+
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -305,6 +307,7 @@ class _VacationsState extends State<Vacations> with TickerProviderStateMixin {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.all(4.0),
+    
       alignment: Alignment.center,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(36.0),
@@ -326,64 +329,64 @@ class _VacationsState extends State<Vacations> with TickerProviderStateMixin {
         element.date.month == current.month);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(27.0),
-        child: AppBar(
-          centerTitle: true,
-          title: Text("Vacations of Current Month",
-              style: TextStyle(color: Colors.indigo[800], fontSize: 18)),
-          backgroundColor: Colors.white,
-          brightness: Brightness.light,
-          automaticallyImplyLeading: false,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(27.0),
+          child: AppBar(
+            centerTitle: true,
+            title: Text("Vacations of Current Month",
+                style: TextStyle(color: Colors.indigo[800], fontSize: 18)),
+            backgroundColor: Colors.white,
+            brightness: Brightness.light,
+            automaticallyImplyLeading: false,
 //          backgroundColor: Color(0x44000000),
-          elevation: 0.5,
+            elevation: 0.5,
+          ),
         ),
-      ),
-      body: (_samemontheventsFilter.length == 0)
-          ? Center(
-              child: Text("No vacations record in current month!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black, fontSize: 18)))
-          : ListView(
-              children: _samemontheventsFilter
-                  .map((event) => Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 2.0),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 4.0),
-                      padding: const EdgeInsets.all(7.0),
-                      child: (event is Appointment)
-                          ? ListTile(
-                              leading: SizedBox(
-                                width: 90,
-                                child: Column(children: <Widget>[
-                                  Text(
-                                      DateFormat('EE').format(event.date) +
-                                          '  ' +
-                                          DateFormat.MMMd().format(event.date),
-                                      style: TextStyle(
-                                        color:
-                                            Colors.indigo[800].withOpacity(1.0),
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  Text(DateFormat.jm().format(event.date),
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.5,
-                                      )),
-                                ]),
-                              ),
-                              title: Text(event.title),
-                              onTap: () {
-                                setState(() {});
-                              },
-                            )
-                          : null))
-                  .toList()),
-    );
+        body: (_samemontheventsFilter.length == 0)
+            ? Center(
+              child:Text("No vacations record in current month!",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black, fontSize: 18))
+            )
+            : ListView(
+                children: _samemontheventsFilter
+                    .map((event) => Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 2.0),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                              padding:const EdgeInsets.all(7.0),
+                        child: (event is Appointment)
+                            ? ListTile(
+                                leading: SizedBox(
+                                  width: 90,
+                                  child: Column(children: <Widget>[
+                                    Text(
+                                        DateFormat('EE').format(event.date) +
+                                            '  ' +
+                                            DateFormat.MMMd()
+                                                .format(event.date),
+                                        style: TextStyle(
+                                          color: Colors.indigo[800].withOpacity(1.0),
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                    Text(DateFormat.jm().format(event.date),
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          height: 1.5,
+                                        )),
+                                  ]),
+                                ), 
+                                title: Text(event.title),
+                                onTap: () {
+                                  setState(() {});
+                                },
+                              )
+                            : null))
+                    .toList()));
   }
 }
