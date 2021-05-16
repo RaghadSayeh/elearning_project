@@ -38,12 +38,12 @@ class DoctorScheduleBodyState extends State<DoctorScheduleBody> {
         fontWeight: FontWeight.w400);
     // final subHeaderTextStyle = regularTextStyle.copyWith(fontSize: 12.0);
     final headerTextStyle = baseTextStyle.copyWith(
-        color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.w600);
+        color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.w600);
 
     Widget _planetValue({String value, String image}) {
       return new Row(children: <Widget>[
         new Image.asset(image, height: 12.0),
-        new Container(width: 8.0),
+        new Container(width: 6.0),
         new Text(coursetime, style: regularTextStyle),
       ]);
     }
@@ -54,34 +54,57 @@ class DoctorScheduleBodyState extends State<DoctorScheduleBody> {
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(height: 4.0),
+          new Container(height: 2.0),
           new Text(coursename, style: headerTextStyle),
-          new Container(height: 10.0),
-          // new Text(planet.location, style: subHeaderTextStyle),
+          new Container(height: 8.0),
           new Container(
-              margin: new EdgeInsets.symmetric(vertical: 8.0),
+              margin: new EdgeInsets.symmetric(vertical: 6.0),
               height: 2.0,
               width: 18.0,
               color: new Color(0xff00c6ff)),
           new Row(
             children: <Widget>[
               new Expanded(
-                  child: _planetValue(value: "2 - 3", image: 'assets/1.png')),
+                  child:
+                      _planetValue(value: coursedate, image: 'assets/1.png')),
+              SizedBox(
+                width: 3.0,
+              ),
               new Expanded(
                   child: new Text(
-                courseday,
+                coursedate,
                 style: TextStyle(color: Colors.white),
-              )) //no need to add course date since it is every day and it continues around the whole semester
+              )),
             ],
           ),
+          SizedBox(
+            height: 7.0,
+          ),
+          new Expanded(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Office hrs.",
+                style: TextStyle(color: Colors.white),
+              ),
+              new Text(
+                courseday,
+                style: TextStyle(color: Colors.white),
+              ),
+              SizedBox(
+                width: 5,
+              )
+            ],
+          ))
         ],
       ),
     );
 
     final planetCard = new Container(
       child: planetCardContent,
-      height: 124.0,
-      margin: new EdgeInsets.only(left: 46.0),
+      height: 150.0,
+      margin: new EdgeInsets.only(left: 55.0),
       decoration: new BoxDecoration(
         color: Colors.indigo[800],
         shape: BoxShape.rectangle,
@@ -97,10 +120,10 @@ class DoctorScheduleBodyState extends State<DoctorScheduleBody> {
     );
 
     return new Container(
-        height: 120.0,
+        height: 150.0,
         margin: const EdgeInsets.symmetric(
           vertical: 16.0,
-          horizontal: 24.0,
+          horizontal: 21.0,
         ),
         child: new Stack(
           children: <Widget>[

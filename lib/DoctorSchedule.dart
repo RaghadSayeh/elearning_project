@@ -4,6 +4,11 @@ import 'HomePageDoctor.dart';
 import 'DoctorChatPage.dart';
 import 'WelcomePage.dart';
 import 'DoctorNotifications.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'DoctorsTabList.dart';
+import 'UserDta.dart';
+import 'DoctorTable.dart';
 
 class DoctorSchedule extends StatefulWidget {
   _DoctorScheduleState createState() => _DoctorScheduleState();
@@ -13,30 +18,50 @@ class _DoctorScheduleState extends State<DoctorSchedule> {
   @override
   void initState() {
     super.initState();
+    print("DoctorSchedule is called");
+    getDoctorTable();
   }
 
-  List<String> courses = [
-    'Communications',
-    'Network Lab',
-    'Communications Lab',
-    'C++',
-    'Java'
-  ];
-  List<String> days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
-  List<String> dates = [
-    '2-5-2021',
-    '3-5-2021',
-    '4-5-2021',
-    '5-5-2021',
-    '6-5-2021'
-  ];
-  List<String> coursetime = [
-    '8 - 9',
-    '9.30 - 11',
-    '1 - 2',
-    '1.30 - 3',
-    '10 - 11'
-  ];
+  Future getDoctorTable() async {
+    DoctorsTabList.dl = new List();
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getDoctorSchedule.php';
+    print("user id is:");
+    print(UserDta.userid);
+
+    var response = await http.post(url,
+        body: {"drname": UserDta.username}); //must pass here doctor name
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'failed to get doctor schedule') {
+      print("failed to get doctor schedule");
+    } else {
+      print("get doctor schedule successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String officehrs = doclist['officehrs'];
+        String course = doclist['course'];
+        String day = doclist['day'];
+        String coursetime = doclist['coursetime'];
+
+        DoctorTable cd = new DoctorTable();
+        cd.officehrs = officehrs;
+        cd.coursename = course;
+        cd.courseday = day;
+        cd.courseTime = coursetime;
+
+        DoctorsTabList.dl.add(cd);
+      }
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,44 +87,41 @@ class _DoctorScheduleState extends State<DoctorSchedule> {
             ],
           )),
       backgroundColor: Colors.white,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: new Container(
-              color: Colors.white,
-              child: new CustomScrollView(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: false,
-                slivers: <Widget>[
-                  new SliverPadding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    sliver: new SliverList(
-                      delegate: new SliverChildBuilderDelegate(
-                        (context, index) => new DoctorScheduleBody(
-                            courses[index],
-                            coursetime[index],
-                            dates[index],
-                            days[index]),
-                        childCount: courses.length,
-                      ),
+      body: DoctorsTabList.dl.length == 0
+          ? Center(
+              child: new Text("Waiting to load data..."),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: new Container(
+                    color: Colors.white,
+                    child: new CustomScrollView(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: false,
+                      slivers: <Widget>[
+                        new SliverPadding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          sliver: new SliverList(
+                            delegate: new SliverChildBuilderDelegate(
+                              (context, index) => new DoctorScheduleBody(
+                                  DoctorsTabList.dl[index].coursename,
+                                  DoctorsTabList.dl[index].courseTime,
+                                  DoctorsTabList.dl[index].courseday,
+                                  DoctorsTabList.dl[index].officehrs),
+                              childCount: DoctorsTabList.dl.length,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                )
+              ],
             ),
-          )
-        ],
-      ),
-      bottomNavigationBar:
-          //  ClipRRect(
-          //   borderRadius: BorderRadius.only(
-          //     topLeft: Radius.circular(30.0),
-          //     topRight: Radius.circular(30.0),
-          //   ),
-          //   child:
-          BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,

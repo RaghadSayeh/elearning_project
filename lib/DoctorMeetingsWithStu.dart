@@ -4,6 +4,10 @@ import 'DoctorChatPage.dart';
 import 'WelcomePage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'HomePageDoctor.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'UserDta.dart';
+import 'DoctorStuMeeting.dart';
 
 class DoctorMeetingWithStu extends StatefulWidget {
   _DoctorMeetingWithStuState createState() => _DoctorMeetingWithStuState();
@@ -13,38 +17,53 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
   @override
   void initState() {
     super.initState();
+    print("DoctorMeetingWithStu is called");
+    getDoctorTable();
   }
 
-  List<String> students = [
-    'Raghad Abd',
-    'Amani Ali',
-    'Noor Omar',
-    'Malak Ahmad',
-    'Zain Kareem'
-  ];
+  Future getDoctorTable() async {
+    DoctorStuMeetinglist.li = new List();
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getDoctorStuMeetings.php';
+    print("user id is:");
+    print(UserDta.userid);
 
-  List<String> courses = [
-    'Communications',
-    'Network Lab',
-    'Communications Lab',
-    'C++',
-    'Java'
-  ];
-  List<String> days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
-  List<String> relatedto = [
-    'Misunderstanding issues',
-    'Exams issues',
-    'Assignment details',
-    'Due date for projects',
-    'Quiz data'
-  ];
-  List<String> dates = [
-    '2-5-2021',
-    '3-5-2021',
-    '4-5-2021',
-    '5-5-2021',
-    '6-5-2021'
-  ];
+    var response = await http.post(url,
+        body: {"doctorid": UserDta.userid}); //must pass here doctor name
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get doctor meetings') {
+      print("Failed to get doctor meetings");
+    } else {
+      print("get doctor meetings successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String studentname = doclist['studentname'];
+        String coursename = doclist['coursename'];
+        String about = doclist['about'];
+        String meetingdate = doclist['meetingdate'];
+        String studentid = doclist['studentid'];
+
+        DoctorStuMeeting cd = new DoctorStuMeeting();
+
+        cd.studentname = studentname;
+        cd.coursename = coursename;
+        cd.about = about;
+        cd.meetingdate = meetingdate;
+        cd.studentid = studentid;
+
+        DoctorStuMeetinglist.li.add(cd);
+      }
+      setState(() {});
+    }
+  }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -115,11 +134,17 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
                                       color: Colors.black,
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold)),
-                              new Text(course,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold))
+                              course.length > 17
+                                  ? new Text(course.substring(0, 17),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
+                                  : new Text(course,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
                             ],
                           ),
                         ),
@@ -129,7 +154,7 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                new Text("Meeting date : ",
+                                new Text("Meeting dt :",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 17,
@@ -148,7 +173,7 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  new Text("Meeting day : ",
+                                  new Text("Student id : ",
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 17,
@@ -221,7 +246,6 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      //  resizeToAvoidBottomPadding: false,
       appBar: AppBar(
           automaticallyImplyLeading: false,
           centerTitle: true,
@@ -242,51 +266,59 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
             ],
           )),
       backgroundColor: Colors.white,
-      body: ListView.builder(
-          itemCount: students.length,
-          itemBuilder: (context, index) {
-            return Container(
-              margin: EdgeInsets.all(12),
-              width: 200,
-              height: 120,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                color: Colors.indigo[800],
-                elevation: 10,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    new ListTile(
-                      contentPadding: EdgeInsets.all(15),
-                      leading: Icon(
-                        Icons.video_call,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                      trailing: GestureDetector(
-                        onTap: () {
-                          _registerSheet(courses[index], days[index],
-                              relatedto[index], dates[index]);
-                        },
-                        child: Icon(
-                          Icons.arrow_forward,
-                          size: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                      title: Text(students[index],
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold)),
+      body: DoctorStuMeetinglist.li.length == 0
+          ? Center(
+              child: new Text("Waiting to load data..."),
+            )
+          : ListView.builder(
+              itemCount: DoctorStuMeetinglist.li.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.all(12),
+                  width: 200,
+                  height: 120,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
-                  ],
-                ),
-              ),
-            );
-          }),
+                    color: Colors.indigo[800],
+                    elevation: 10,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new ListTile(
+                          contentPadding: EdgeInsets.all(15),
+                          leading: Icon(
+                            Icons.video_call,
+                            size: 60,
+                            color: Colors.white,
+                          ),
+                          trailing: GestureDetector(
+                            onTap: () {
+                              _registerSheet(
+                                  DoctorStuMeetinglist.li[index].coursename,
+                                  DoctorStuMeetinglist.li[index].studentid,
+                                  DoctorStuMeetinglist.li[index].about,
+                                  DoctorStuMeetinglist.li[index].meetingdate);
+                            },
+                            child: Icon(
+                              Icons.arrow_forward,
+                              size: 25,
+                              color: Colors.white,
+                            ),
+                          ),
+                          title: Text(
+                              DoctorStuMeetinglist.li[index].studentname,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,

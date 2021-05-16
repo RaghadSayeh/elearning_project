@@ -31,7 +31,7 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
     'doctorresults.png',
     '27.jpg',
     '31.png',
-    '16.jpg',
+    //'16.jpg',
     '20.png',
     '23.jpg'
   ];
@@ -44,7 +44,7 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
     'Student results',
     'Exams',
     'Vacations',
-    'Courses',
+    // 'Courses',
     'Profile',
     'Contact admin'
   ];
@@ -88,7 +88,7 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
           color: Colors.white,
           child: GridView.count(
             crossAxisCount: 2,
-            children: List.generate(10, (index) {
+            children: List.generate(names.length, (index) {
               return GestureDetector(
                   onTap: () {
                     if (index == 0) {
@@ -130,13 +130,15 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
                           MaterialPageRoute(
                               //Vacations
                               builder: (context) => new DoctorLeavesVaca()));
-                    } else if (index == 7) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              //DoctorCoursesStud
-                              builder: (context) => new HotelHomeScreen()));
-                    } else if (index == 8) {
+                    }
+                    // else if (index == 7) {
+                    //   Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //           //DoctorCoursesStud
+                    //           builder: (context) => new HotelHomeScreen()));
+                    // }
+                    else if (index == 7) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -159,22 +161,6 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
                                   fit: BoxFit.fill,
                                   image: new AssetImage(
                                       'assets/' + images[index])))),
-                      // Container(
-                      //   width: 160,
-                      //   height: 150,
-                      //   decoration: BoxDecoration(
-                      //     border: Border.all(
-                      //       color: Theme.of(context).primaryColor,
-                      //     ),
-                      //     //borderRadius: BorderRadius.all(Radius.circular(50))
-                      //   ),
-                      //   margin: EdgeInsets.fromLTRB(10, 2, 10, 5),
-                      //   //  padding: EdgeInsets.all(2),
-                      //   child: Image(
-                      //     image: AssetImage('assets/' + images[index]),
-                      //     fit: BoxFit.fill,
-                      //   ),
-                      // ),
                       Container(
                         child: new Text(
                           names[index],
@@ -186,14 +172,7 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
                   ));
             }),
           )),
-      bottomNavigationBar:
-          //  ClipRRect(
-          //   borderRadius: BorderRadius.only(
-          //     topLeft: Radius.circular(30.0),
-          //     topRight: Radius.circular(30.0),
-          //   ),
-          //   child:
-          BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,

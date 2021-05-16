@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+
+//import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'DoctorChatPage.dart';
@@ -7,6 +9,12 @@ import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
 import 'HomePageDoctor.dart';
 import 'DoctorResultsStudentmark.dart';
+import 'UserDta.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'DoctorTable.dart';
+import 'DoctorsTabList.dart';
+import 'ExamsData.dart';
 
 class DoctorResults extends StatefulWidget {
   DoctorResultsState createState() => DoctorResultsState();
@@ -16,15 +24,50 @@ class DoctorResultsState extends State<DoctorResults> {
   @override
   void initState() {
     super.initState();
+    print("DoctorResults is called");
+    getDoctorTable();
   }
 
-  List<String> courses = [
-    'Communications',
-    'Network Lab',
-    'Communications Lab',
-    'C++',
-    'Java'
-  ];
+  Future getDoctorTable() async {
+    DoctorsTabList.dl = new List();
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getDoctorSchedule.php';
+    print("user id is:");
+    print(UserDta.userid);
+
+    var response = await http.post(url,
+        body: {"drname": UserDta.username}); //must pass here doctor name
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'failed to get doctor schedule') {
+      print("failed to get doctor schedule");
+    } else {
+      print("get doctor schedule successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String officehrs = doclist['officehrs'];
+        String course = doclist['course'];
+        String day = doclist['day'];
+        String coursetime = doclist['coursetime'];
+
+        DoctorTable cd = new DoctorTable();
+        cd.officehrs = officehrs;
+        cd.coursename = course;
+        cd.courseday = day;
+        cd.courseTime = coursetime;
+
+        DoctorsTabList.dl.add(cd);
+      }
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,54 +128,103 @@ class DoctorResultsState extends State<DoctorResults> {
               ),
             ),
             SizedBox(height: 30),
-            Expanded(
-              child: StaggeredGridView.countBuilder(
-                padding: EdgeInsets.all(0),
-                crossAxisCount: 2,
-                itemCount: courses.length,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                itemBuilder: (context, index) {
-                  return Column(children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    new DoctorResultsStudentmark()));
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        height: index.isEven ? 200 : 240,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          image: DecorationImage(
-                            image: AssetImage("assets/docres.png"),
-                            fit: BoxFit.fill,
-                          ),
+            DoctorsTabList.dl.length == 0
+                ? Center(
+                    child: new Text(
+                      "Waiting to load data..",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : Expanded(
+                    //DoctorsTabList.dl.length
+                    child: AnimationLimiter(
+                      child: GridView.count(
+                        childAspectRatio: 1.0,
+
+                        // padding: const EdgeInsets.all(8.0),
+                        crossAxisCount: 2,
+                        children: List.generate(
+                          DoctorsTabList.dl.length,
+                          (int index) {
+                            return AnimationConfiguration.staggeredGrid(
+                              columnCount: 2,
+                              position: index,
+                              duration: const Duration(milliseconds: 375),
+                              child: ScaleAnimation(
+                                scale: 0.5,
+                                child: FadeInAnimation(
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          CourseName.coursename = DoctorsTabList
+                                              .dl[index].coursename;
+                                          print(
+                                              "before go to DoctorResultStudentMarks");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      new DoctorResultsStudentmark()));
+                                        },
+                                        child:
+                                            //  Column(
+                                            //   mainAxisAlignment:
+                                            //       MainAxisAlignment.start,
+                                            //   crossAxisAlignment:
+                                            //       CrossAxisAlignment.start,
+                                            //   children: [
+                                            Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4,
+                                          height: 120,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/docres.png"),
+                                                fit: BoxFit.fill,
+                                              ),
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(30),
+                                                  topRight:
+                                                      Radius.circular(30))),
+                                          child: new Text(" "),
+                                        ),
+                                        //   ],
+                                        //   )
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Column(
+                                        // mainAxisAlignment:
+                                        //     MainAxisAlignment.start,
+                                        // crossAxisAlignment:
+                                        //     CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            DoctorsTabList.dl[index].coursename,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                            // style: kTitleTextStyle,
+                                          ),
+                                        ],
+                                      ),
+                                    ])),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 18,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          courses[index],
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                          // style: kTitleTextStyle,
-                        ),
-                      ],
-                    ),
-                  ]);
-                },
-                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-              ),
-            ),
+                  ),
           ],
         ),
       ),

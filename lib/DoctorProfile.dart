@@ -4,8 +4,86 @@ import 'HomePageDoctor.dart';
 import 'WelcomePage.dart';
 import 'DoctorNotifications.dart';
 import 'DoctorChatPage.dart';
+import 'UserDta.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class DoctorProfile extends StatelessWidget {
+class DoctorProfile extends StatefulWidget {
+  DoctorProfileState createState() => DoctorProfileState();
+}
+
+class DoctorProfileState extends State<DoctorProfile> {
+  TextEditingController otherinfo =
+      TextEditingController(text: UserDta.otherinfo);
+  TextEditingController phoneno = TextEditingController(text: UserDta.phoneno);
+  TextEditingController password = TextEditingController(text: UserDta.pass);
+
+  @override
+  void initState() {
+    super.initState();
+    print("DoctorProfile is called");
+  }
+
+  Future<void> updateProfile(String phoneno, String pass, String others) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/updateProfile.php';
+    print("the data is");
+
+    var response = await http.post(url, body: {
+      "userid": UserDta.userid,
+      "password": pass,
+      "logintype": UserDta.logintype,
+      "email": UserDta.email,
+      "username": UserDta.username,
+      "phoneno": phoneno,
+      "otherinfo": others
+    });
+
+    print("status code is");
+    print(response.statusCode);
+
+    final res = json.decode(response.body);
+    if (res == 'Profile updated successfully') {
+      print("Profile updated successfully");
+      showAlertDialog(context);
+    } else {
+      print("failed to profile updated");
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Updated successfully",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Your profile updated successfully, enjoy your career."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -33,7 +111,9 @@ class DoctorProfile extends StatelessWidget {
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
-                decoration: InputDecoration(labelText: "Email"),
+                style: TextStyle(color: Colors.white),
+                controller: phoneno,
+                decoration: InputDecoration(labelText: "Phone no."),
               ),
             ),
             SizedBox(height: size.height * 0.03),
@@ -41,6 +121,8 @@ class DoctorProfile extends StatelessWidget {
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
+                style: TextStyle(color: Colors.white),
+                controller: password,
                 decoration: InputDecoration(labelText: "Password"),
                 obscureText: true,
               ),
@@ -50,6 +132,8 @@ class DoctorProfile extends StatelessWidget {
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
+                style: TextStyle(color: Colors.white),
+                controller: otherinfo,
                 decoration: InputDecoration(labelText: "Other information"),
               ),
             ),
@@ -58,7 +142,9 @@ class DoctorProfile extends StatelessWidget {
               alignment: Alignment.centerRight,
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                  updateProfile(phoneno.text, password.text, otherinfo.text);
+                },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(80.0)),
                 textColor: Colors.white,
@@ -83,14 +169,7 @@ class DoctorProfile extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar:
-          //  ClipRRect(
-          //   borderRadius: BorderRadius.only(
-          //     topLeft: Radius.circular(30.0),
-          //     topRight: Radius.circular(30.0),
-          //   ),
-          //   child:
-          BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,

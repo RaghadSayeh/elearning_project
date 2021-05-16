@@ -6,6 +6,7 @@ import 'WelcomePage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'testCC.dart';
+import 'testSta.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(new MyApp()));

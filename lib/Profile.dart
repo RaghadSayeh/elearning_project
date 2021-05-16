@@ -1,20 +1,84 @@
 import 'package:flutter/material.dart';
+import 'UserDta.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
-  TextEditingController typeCont = TextEditingController();
-  TextEditingController cityCont = TextEditingController();
-  TextEditingController phoneCont = TextEditingController();
-  TextEditingController otherCont = TextEditingController();
+  TextEditingController pass = TextEditingController(text: UserDta.pass);
+  TextEditingController phoneCont =
+      TextEditingController(text: UserDta.phoneno);
+  TextEditingController otherCont =
+      TextEditingController(text: UserDta.otherinfo);
 
   @override
   void initState() {
     super.initState();
     print("the dateTime is");
     print(DateTime.now());
+  }
+
+  Future<void> updateProfile(String email, String pass, String others) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/updateProfile.php';
+    print("the data is");
+
+    var response = await http.post(url, body: {
+      "userid": UserDta.userid,
+      "password": pass,
+      "logintype": UserDta.logintype,
+      "email": email,
+      "username": UserDta.username,
+      "phoneno": UserDta.phoneno,
+      "otherinfo": others
+    });
+
+    print("status code is");
+    print(response.statusCode);
+
+    final res = json.decode(response.body);
+    if (res == 'Profile updated successfully') {
+      print("Profile updated successfully");
+      showAlertDialog(context);
+    } else {
+      print("failed to profile updated");
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Updated successfully",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Your profile updated successfully, enjoy your learning."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Widget profileView() {
@@ -82,9 +146,9 @@ class _ProfileState extends State<Profile> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                        controller: cityCont,
+                        controller: phoneCont,
                         decoration: InputDecoration(
-                            hintText: 'Email',
+                            hintText: 'Email.',
                             border: InputBorder.none,
                             hintStyle: TextStyle(color: Colors.white)),
                         //  hintText:
@@ -163,22 +227,27 @@ class _ProfileState extends State<Profile> {
               Expanded(
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Container(
-                    height: 50,
-                    width: 200,
-                    child: Align(
-                      child: Text(
-                        'Update',
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      updateProfile(phoneCont.text, pass.text, otherCont.text);
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 200,
+                      child: Align(
+                        child: Text(
+                          'Update',
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 20),
+                        ),
                       ),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          )),
                     ),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(30),
-                        )),
                   ),
                 ),
               )

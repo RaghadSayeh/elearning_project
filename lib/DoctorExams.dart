@@ -3,10 +3,13 @@ import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
 import 'HomePageDoctor.dart';
-import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'ExamsData.dart';
+import 'UserDta.dart';
 
 const CURVE_HEIGHT = 170.0;
 const AVATAR_RADIUS = CURVE_HEIGHT * 0.0;
@@ -92,13 +95,61 @@ class DoctorExams extends StatefulWidget {
 }
 
 class DoctorExamsState extends State<DoctorExams> {
-  List<String> courses = [
-    'Communications',
-    'Network Lab',
-    'Communications Lab',
-    'C++',
-    'Java'
-  ];
+  @override
+  void initState() {
+    super.initState();
+    print("DoctorExams is called");
+    getDoctorTable();
+  }
+
+  Future getDoctorTable() async {
+    ExamsDataList.li = new List();
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getDoctorExams.php';
+    print("user id is:");
+    print(UserDta.userid);
+
+    var response = await http.post(url,
+        body: {"doctorid": UserDta.userid, "drname": UserDta.username});
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get doctors exams') {
+      print("Failed to get doctors exams");
+    } else {
+      print("get doctor exams successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String otherinfo = doclist['otherinfo'];
+        String finaltime = doclist['finaltime'];
+        String finaldate = doclist['finaldate'];
+        String secondtime = doclist['secondtime'];
+        String seconddate = doclist['seconddate'];
+        String firsttime = doclist['firsttime'];
+        String firstdate = doclist['firstdate'];
+        String course = doclist['course'];
+
+        ExamsData ed = new ExamsData();
+        ed.otherinfo = otherinfo;
+        ed.finaltime = finaltime;
+        ed.finaldate = finaldate;
+        ed.secondtime = secondtime;
+        ed.seconddate = seconddate;
+        ed.finaltime = firsttime;
+        ed.firstdate = firstdate;
+        ed.course = course;
+
+        ExamsDataList.li.add(ed);
+      }
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,10 +174,10 @@ class DoctorExamsState extends State<DoctorExams> {
             ],
           )),
       body: new ListView.builder(
-          itemCount: courses.length,
+          itemCount: ExamsDataList.li.length,
           itemBuilder: (BuildContext ctxt, int index) {
             return new CurvedListItem(
-              title: courses[index],
+              title: ExamsDataList.li[index].course,
               time: 'TODAY 5:30 PM',
               color: Colors.white,
               nextColor: Colors.indigo[800],
@@ -173,7 +224,13 @@ class DoctorExamsState extends State<DoctorExams> {
   }
 }
 
-class CurvedListItem extends StatelessWidget {
+class CurvedListItem extends StatefulWidget {
+  final String title;
+  final String time;
+  final String people;
+  final IconData icon;
+  final Color color;
+  final Color nextColor;
   const CurvedListItem({
     this.title,
     this.time,
@@ -182,13 +239,134 @@ class CurvedListItem extends StatelessWidget {
     this.color,
     this.nextColor,
   });
+  CurvedListItemState createState() =>
+      CurvedListItemState(title, time, icon, people, color, nextColor);
+}
 
-  final String title;
-  final String time;
-  final String people;
-  final IconData icon;
-  final Color color;
-  final Color nextColor;
+class CurvedListItemState extends State<CurvedListItem> {
+  String title;
+  String time;
+  String people;
+  IconData icon;
+  Color color;
+  Color nextColor;
+
+  CurvedListItemState(
+    this.title,
+    this.time,
+    this.icon,
+    this.people,
+    this.color,
+    this.nextColor,
+  );
+
+  Future<void> updatefirst(String fdate, String ftime) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/updateExams.php';
+    print("the data is");
+
+    var response = await http.post(url, body: {
+      "doctorid": UserDta.userid,
+      "firstdate": fdate,
+      "firsttime": ftime,
+      "course": this.title
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    // print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+    if (res == 'exams updated successfully') {
+      print("exams updated successfully");
+      showAlertDialog(context);
+    } else {
+      print("failed to set exam date");
+    }
+  }
+
+  Future<void> updatesecond(String fdate, String ftime) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/updateExams1.php';
+    print("the data is");
+
+    var response = await http.post(url, body: {
+      "doctorid": UserDta.userid,
+      "seconddate": fdate,
+      "secondtime": ftime,
+      "course": this.title
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    // print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+    if (res == 'exams updated successfully') {
+      print("exams updated successfully");
+      showAlertDialog(context);
+    } else {
+      print("failed to set exam date");
+    }
+  }
+
+  Future<void> updatefinal(String fdate, String ftime) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/updateExams2.php';
+    print("the data is");
+
+    var response = await http.post(url, body: {
+      "doctorid": UserDta.userid,
+      "finaldate": fdate,
+      "finaltime": ftime,
+      "course": this.title
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    // print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+    if (res == 'exams updated successfully') {
+      print("exams updated successfully");
+      showAlertDialog(context);
+    } else {
+      print("failed to set exam date");
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Sent successfully",
+        // textAlign: TextAlign.justify,
+        // textDirection: TextDirection.rtl,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Your exam date set successfully."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   void setExamDate(BuildContext context) async {
     return showDialog(
@@ -320,10 +498,6 @@ class CurvedListItem extends StatelessWidget {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Text(
-              //   time,
-              //   style: TextStyle(color: Colors.white, fontSize: 12),
-              // ),
               const SizedBox(
                 height: 10,
               ),
@@ -337,13 +511,6 @@ class CurvedListItem extends StatelessWidget {
                         fontSize: 22,
                         fontWeight: FontWeight.bold),
                   ),
-                  // IconButton(
-                  //   icon: Icon(Icons.menu),
-                  //   onPressed: () {
-                  //     setExamDate(context);
-                  //   },
-                  //   color: Colors.indigo[800],
-                  // )
                 ],
               ),
               const SizedBox(
@@ -363,6 +530,10 @@ class CurvedListItem extends StatelessWidget {
                             date.timeZoneOffset.inHours.toString());
                       }, onConfirm: (date) {
                         print('confirm $date');
+                        int idx = date.toString().indexOf(' ');
+                        print("idx is:$idx");
+                        updatefirst(date.toString().substring(0, idx),
+                            date.toString().substring(idx + 1));
                       }, locale: LocaleType.en);
                     },
                     child: new Text("First",
@@ -379,6 +550,10 @@ class CurvedListItem extends StatelessWidget {
                               date.timeZoneOffset.inHours.toString());
                         }, onConfirm: (date) {
                           print('confirm $date');
+                          int idx = date.toString().indexOf(' ');
+                          print("idx is:$idx");
+                          updatesecond(date.toString().substring(0, idx),
+                              date.toString().substring(idx + 1));
                         }, locale: LocaleType.en);
                       },
                       child: new Text("Second",
@@ -394,6 +569,10 @@ class CurvedListItem extends StatelessWidget {
                               date.timeZoneOffset.inHours.toString());
                         }, onConfirm: (date) {
                           print('confirm $date');
+                          int idx = date.toString().indexOf(' ');
+                          print("idx is:$idx");
+                          updatefinal(date.toString().substring(0, idx),
+                              date.toString().substring(idx + 1));
                         }, locale: LocaleType.en);
                       },
                       child: new Text("Final",
@@ -405,76 +584,6 @@ class CurvedListItem extends StatelessWidget {
     );
   }
 }
-
-// class DoctorExamsState extends State<DoctorExams> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       // appBar: AppBar(
-//       //     automaticallyImplyLeading: false,
-//       //     backgroundColor: Theme.of(context).primaryColor,
-//       //     shape: RoundedRectangleBorder(
-//       //       borderRadius: BorderRadius.vertical(
-//       //         bottom: Radius.circular(30),
-//       //       ),
-//       //     ),
-//       //     title: Row(
-//       //       mainAxisAlignment: MainAxisAlignment.center,
-//       //       children: [
-//       //         new Text(
-//       //           "Doctor exams",
-//       //           style:
-//       //               TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-//       //         ),
-//       //       ],
-//       //     )),
-//       body: new Stack(children: [
-//         CurvedShape(),
-//         Center(
-//           child: new Text("Doctor Exams"),
-//         ),
-//       ]),
-//       bottomNavigationBar: BottomNavigationBar(
-//         backgroundColor: Colors.white,
-//         type: BottomNavigationBarType.fixed,
-//         currentIndex: 0,
-//         onTap: (value) async {
-//           value == 0
-//               ? Navigator.push(context,
-//                   MaterialPageRoute(builder: (context) => new HomePageDoctor()))
-//               : value == 1
-//                   ? Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                           builder: (context) => new DoctorNotificationPage()))
-//                   : value == 2
-//                       ? Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                               builder: (context) => new DoctorChatPage()))
-//                       : Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                               builder: (context) => new WelcomePage()));
-//         },
-//         items: [
-//           BottomNavigationBarItem(
-//             icon: new Icon(Icons.home),
-//             title: new Text('Home'),
-//           ),
-//           BottomNavigationBarItem(
-//             icon: new Icon(Icons.notifications),
-//             title: new Text('Notifications'),
-//           ),
-//           BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('Chat')),
-//           BottomNavigationBarItem(
-//               icon: Icon(Icons.logout), title: Text('Logout'))
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class CurvedShape extends StatelessWidget {
   @override

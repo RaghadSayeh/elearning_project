@@ -9,6 +9,12 @@ import 'HomePageDoctor.dart';
 import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'CoursesList.dart';
+import 'CourseData.dart';
+import 'UserDta.dart';
+import 'hotel_app_theme.dart';
 
 class DocCoursesRegistration extends StatefulWidget {
   @override
@@ -28,28 +34,80 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
+    getCourses();
     super.initState();
   }
 
-  List<String> courses = [
-    'Communications',
-    'Network Lab',
-    'Communications Lab',
-    'C++',
-    'Java',
-    'Algorithms',
-    'Data structure',
-    'Architecture 1',
-    'Network 1',
-    'Architecture 2',
-    'Network 2',
-    'Parallel Computing',
-    'Image Processing',
-    'Digital 1',
-    'Digital 2',
-    'Digital 3'
-  ];
-  //List<String> days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
+  Future getCourses() async {
+    CourseList.cl = new List();
+    var url = 'https://crenelate-intervals.000webhostapp.com/getAllCourses.php';
+    print("the data is");
+
+    var response = await http.get(url);
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get courses') {
+      print("Failed to get courses");
+    } else {
+      print("get all Courses successfully");
+      //coursename,day,courseTime,officehrs
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        // String drname = doclist['drname'];
+        String course = doclist['coursename'];
+        String day = doclist['day'];
+        String coursetime = doclist['courseTime'];
+        String officehrs = doclist['officehrs'];
+
+        CourseData cd = new CourseData();
+        cd.coursename = course;
+        cd.courseday = day;
+        cd.coursetime = coursetime;
+        cd.drofficehrs = officehrs;
+
+        CourseList.cl.add(cd);
+        print("student course length is");
+        print(CourseList.cl.length.toString());
+      }
+      setState(() {});
+    }
+  }
+
+  Future<void> registerCourse(
+      String course, String day, String coursetime, String officeHrs) async {
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/registerCourse.php';
+    print("the data is");
+
+    final dateTime = DateTime.now();
+
+    var response = await http.post(url, body: {
+      "drid": UserDta.userid,
+      "drname": UserDta.username,
+      "course": course,
+      "day": day,
+      "coursetime": coursetime,
+      "officehrs": officeHrs
+    });
+
+    print("status code is");
+    print(response.statusCode);
+
+    final res = json.decode(response.body);
+    if (res == 'Course registered successfully') {
+      print("Course registered successfully");
+      showAlertDialog1(context);
+    } else {
+      print("failed to register course");
+    }
+  }
+
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
@@ -116,33 +174,234 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
                             ),
                           ];
                         },
-                        body: Container(
-                          color:
-                              HotelAppTheme.buildLightTheme().backgroundColor,
-                          child: ListView.builder(
-                            itemCount: courses.length,
-                            padding: const EdgeInsets.only(top: 8),
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              final int count =
-                                  hotelList.length > 10 ? 10 : hotelList.length;
-                              final Animation<double> animation =
-                                  Tween<double>(begin: 0.0, end: 1.0).animate(
-                                      CurvedAnimation(
-                                          parent: animationController,
-                                          curve: Interval(
-                                              (1 / count) * index, 1.0,
-                                              curve: Curves.fastOutSlowIn)));
-                              animationController.forward();
-                              return RegisterListView(
-                                callback: () {},
-                                hotelData: hotelList[index],
-                                animation: animation,
-                                animationController: animationController,
-                              );
-                            },
-                          ),
-                        ),
+                        body: CourseList.cl.length == 0
+                            ? Center(
+                                child: new Text("Waiting to load data.."),
+                              )
+                            : Container(
+                                color: HotelAppTheme.buildLightTheme()
+                                    .backgroundColor,
+                                child: ListView.builder(
+                                  itemCount: CourseList.cl.length,
+                                  padding: const EdgeInsets.only(top: 8),
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final int count = CourseList.cl.length;
+                                    //    > 10 ? 10 : hotelList.length;
+                                    final Animation<double> animation =
+                                        Tween<double>(begin: 0.0, end: 1.0)
+                                            .animate(CurvedAnimation(
+                                                parent: animationController,
+                                                curve: Interval(
+                                                    (1 / count) * index, 1.0,
+                                                    curve:
+                                                        Curves.fastOutSlowIn)));
+                                    animationController.forward();
+                                    return AnimatedBuilder(
+                                      animation: animationController,
+                                      builder:
+                                          (BuildContext context, Widget child) {
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: Transform(
+                                            transform:
+                                                Matrix4.translationValues(
+                                                    0.0,
+                                                    50 *
+                                                        (1.0 - animation.value),
+                                                    0.0),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 24,
+                                                  right: 24,
+                                                  top: 8,
+                                                  bottom: 16),
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                onTap: () {
+                                                  //  callback();
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(
+                                                                16.0)),
+                                                    boxShadow: <BoxShadow>[
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.6),
+                                                        offset:
+                                                            const Offset(4, 4),
+                                                        blurRadius: 16,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(
+                                                                16.0)),
+                                                    child: Stack(
+                                                      children: <Widget>[
+                                                        Column(
+                                                          children: <Widget>[
+                                                            AspectRatio(
+                                                              aspectRatio: 2,
+                                                              child:
+                                                                  Image.asset(
+                                                                'assets/logo1.jpg',
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              color: HotelAppTheme
+                                                                      .buildLightTheme()
+                                                                  .backgroundColor,
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <
+                                                                    Widget>[
+                                                                  Expanded(
+                                                                    child:
+                                                                        Container(
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets.only(
+                                                                            left:
+                                                                                16,
+                                                                            top:
+                                                                                20,
+                                                                            bottom:
+                                                                                20),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: <
+                                                                              Widget>[
+                                                                            Text(
+                                                                              CourseList.cl[index].coursename,
+                                                                              textAlign: TextAlign.left,
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                fontSize: 22,
+                                                                              ),
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: <Widget>[
+                                                                                Text(
+                                                                                  CourseList.cl[index].coursetime,
+                                                                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                  width: 4,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(top: 4, right: 15),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                                                children: <Widget>[
+                                                                                  Text(
+                                                                                    CourseList.cl[index].courseday,
+                                                                                    style: TextStyle(fontSize: 14, color: Colors.black),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Positioned(
+                                                          top: 8,
+                                                          right: 8,
+                                                          child: Material(
+                                                            color: Colors
+                                                                .transparent,
+                                                            child: InkWell(
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                Radius.circular(
+                                                                    32.0),
+                                                              ),
+                                                              onTap: () {
+                                                                //this is just temporary until enabled by The admin
+                                                                print(
+                                                                    "you are unable to register any course");
+                                                                // registerCourse(
+                                                                //     CourseList
+                                                                //         .cl[
+                                                                //             index]
+                                                                //         .coursename,
+                                                                //     CourseList
+                                                                //         .cl[
+                                                                //             index]
+                                                                //         .courseday,
+                                                                //     CourseList
+                                                                //         .cl[
+                                                                //             index]
+                                                                //         .coursetime,
+                                                                //     CourseList
+                                                                //         .cl[index]
+                                                                //         .drofficehrs);
+                                                                showAlertDialog(
+                                                                    context);
+                                                              },
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        8.0),
+                                                                child: Icon(
+                                                                  Icons.add,
+                                                                  size: 40,
+                                                                  color: HotelAppTheme
+                                                                          .buildLightTheme()
+                                                                      .primaryColor,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                    //  RegisterListView(
+                                    //   callback: () {},
+                                    //   hotelData:CourseList.cl[index];// hotelList[index],
+                                    //   animation: animation,
+                                    //   animationController: animationController,
+                                    // );
+                                  },
+                                ),
+                              ),
                       ),
                     )
                   ],
@@ -268,6 +527,75 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
           ),
         ],
       ),
+    );
+  }
+
+  showAlertDialog1(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Registered successfully",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("New course added to your schedule successfully"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Warning message",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+          "You are unable to register course now...wait until registration time."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 

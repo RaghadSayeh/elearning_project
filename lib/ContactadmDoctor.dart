@@ -8,8 +8,87 @@ import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
 import 'HomePageDoctor.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'UserDta.dart';
 
-class ContactAdminDoctor extends StatelessWidget {
+class ContactAdminDoctor extends StatefulWidget {
+  ContactAdminDoctorState createState() => ContactAdminDoctorState();
+}
+
+class ContactAdminDoctorState extends State<ContactAdminDoctor> {
+  TextEditingController relatedTo = TextEditingController();
+  TextEditingController exp = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    print("ContactAdminDoctor is called");
+  }
+
+  Future<void> contactAdmin(String realtedto, String explan) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/contactAdmin.php';
+    print("the data is");
+
+    final dateTime = DateTime.now();
+
+    var response = await http.post(url, body: {
+      "studentid": UserDta.userid, //student id means doctor is
+      "studentname": UserDta.username, //student name means doctor name
+      "dt": dateTime.toString(),
+      "relatedto": realtedto,
+      "explanation": explan
+    });
+
+    print("status code is");
+    print(response.statusCode);
+
+    final res = json.decode(response.body);
+    if (res == 'Sent admin successfully') {
+      print("Sent admin successfully");
+      showAlertDialog(context);
+    } else {
+      print("from static dta");
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Sent successfully",
+        // textAlign: TextAlign.justify,
+        // textDirection: TextDirection.rtl,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+          "Your message sent successfully to admin, you will recieve the response soon."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -33,14 +112,19 @@ class ContactAdminDoctor extends StatelessWidget {
               ),
               RoundedInputField(
                 hintText: "Related to",
+                tt: relatedTo,
                 onChanged: (value) {},
               ),
-              RoundedPasswordField(
+              RoundedInputField(
+                hintText: "Explanation",
+                tt: exp,
                 onChanged: (value) {},
               ),
               RoundedButton(
                 text: "Send",
-                press: () {},
+                press: () {
+                  contactAdmin(relatedTo.text, exp.text);
+                },
               ),
               SizedBox(height: size.height * 0.03),
             ],
