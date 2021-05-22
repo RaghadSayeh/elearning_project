@@ -9,8 +9,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   TextEditingController pass = TextEditingController(text: UserDta.pass);
-  TextEditingController phoneCont =
-      TextEditingController(text: UserDta.phoneno);
+  TextEditingController phoneCont = TextEditingController(text: UserDta.email);
   TextEditingController otherCont =
       TextEditingController(text: UserDta.otherinfo);
 
@@ -34,6 +33,10 @@ class _ProfileState extends State<Profile> {
       "phoneno": UserDta.phoneno,
       "otherinfo": others
     });
+
+    UserDta.email = email;
+    UserDta.pass = pass;
+    UserDta.otherinfo = others;
 
     print("status code is");
     print(response.statusCode);
@@ -175,7 +178,7 @@ class _ProfileState extends State<Profile> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                        controller: phoneCont,
+                        controller: pass,
                         decoration: InputDecoration(
                             hintText: 'Password',
                             border: InputBorder.none,
@@ -262,6 +265,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           centerTitle: true,
           leading: IconButton(
@@ -280,6 +284,6 @@ class _ProfileState extends State<Profile> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: profileView());
+        body: SingleChildScrollView(child: profileView()));
   }
 }

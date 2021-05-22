@@ -15,6 +15,7 @@ import 'CoursesList.dart';
 import 'CourseData.dart';
 import 'UserDta.dart';
 import 'hotel_app_theme.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
 class DocCoursesRegistration extends StatefulWidget {
   @override
@@ -30,11 +31,415 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 5));
 
+  AutoCompleteTextField searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<CourseData>> key = new GlobalKey();
+
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     getCourses();
+
+    searchTextField = AutoCompleteTextField<CourseData>(
+        style: new TextStyle(color: Colors.black, fontSize: 16.0),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+            filled: true,
+            hintText: 'Search for any course to register Name',
+            hintStyle: TextStyle(color: Colors.black)),
+        itemSubmitted: (item) {
+          setState(() {
+            print("item submitted");
+            searchTextField.textField.controller.text = item.coursename;
+            // int count = 1; //CourseList.cl.length;
+            // //   CourseList.cl = new List();
+            // Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0)
+            //     .animate(CurvedAnimation(
+            //         parent: animationController,
+            //         curve: Interval((1 / count) * 1, 1.0,
+            //             curve: Curves.fastOutSlowIn)));
+            // animationController.forward();
+            // return AnimatedBuilder(
+            //   animation: animationController,
+            //   builder: (BuildContext context, Widget child) {
+            //     return FadeTransition(
+            //       opacity: animation,
+            //       child: Transform(
+            //         transform: Matrix4.translationValues(
+            //             0.0, 50 * (1.0 - animation.value), 0.0),
+            //         child: Padding(
+            //           padding: const EdgeInsets.only(
+            //               left: 24, right: 24, top: 8, bottom: 16),
+            //           child: InkWell(
+            //             splashColor: Colors.transparent,
+            //             onTap: () {
+            //               //  callback();
+            //             },
+            //             child: Container(
+            //               decoration: BoxDecoration(
+            //                 color:
+            //                     HotelAppTheme.buildLightTheme().backgroundColor,
+            //                 borderRadius: const BorderRadius.all(
+            //                   Radius.circular(38.0),
+            //                 ),
+            //                 boxShadow: <BoxShadow>[
+            //                   BoxShadow(
+            //                       color: Colors.grey.withOpacity(0.2),
+            //                       offset: const Offset(0, 2),
+            //                       blurRadius: 8.0),
+            //                 ],
+            //               ),
+            //               // decoration: BoxDecoration(
+            //               //   borderRadius:
+            //               //       const BorderRadius.all(Radius.circular(16.0)),
+            //               //   boxShadow: <BoxShadow>[
+            //               //     BoxShadow(
+            //               //       color: Colors.grey.withOpacity(0.6),
+            //               //       offset: const Offset(4, 4),
+            //               //       blurRadius: 16,
+            //               //     ),
+            //               //   ],
+            //               // ),
+            //               child: ClipRRect(
+            //                 borderRadius:
+            //                     const BorderRadius.all(Radius.circular(16.0)),
+            //                 child: Stack(
+            //                   children: <Widget>[
+            //                     Column(
+            //                       children: <Widget>[
+            //                         AspectRatio(
+            //                           aspectRatio: 2,
+            //                           child: Image.asset(
+            //                             'assets/logo1.jpg',
+            //                             fit: BoxFit.cover,
+            //                           ),
+            //                         ),
+            //                         Container(
+            //                           color: HotelAppTheme.buildLightTheme()
+            //                               .backgroundColor,
+            //                           child: Row(
+            //                             mainAxisAlignment:
+            //                                 MainAxisAlignment.center,
+            //                             crossAxisAlignment:
+            //                                 CrossAxisAlignment.start,
+            //                             children: <Widget>[
+            //                               Expanded(
+            //                                 child: Container(
+            //                                   child: Padding(
+            //                                     padding: const EdgeInsets.only(
+            //                                         left: 16,
+            //                                         top: 20,
+            //                                         bottom: 20),
+            //                                     child: Column(
+            //                                       mainAxisAlignment:
+            //                                           MainAxisAlignment.center,
+            //                                       crossAxisAlignment:
+            //                                           CrossAxisAlignment.start,
+            //                                       children: <Widget>[
+            //                                         Text(
+            //                                           item.coursename,
+            //                                           textAlign: TextAlign.left,
+            //                                           style: TextStyle(
+            //                                             fontWeight:
+            //                                                 FontWeight.w600,
+            //                                             fontSize: 22,
+            //                                           ),
+            //                                         ),
+            //                                         Row(
+            //                                           mainAxisAlignment:
+            //                                               MainAxisAlignment
+            //                                                   .spaceBetween,
+            //                                           children: <Widget>[
+            //                                             Text(
+            //                                               item.coursetime,
+            //                                               style: TextStyle(
+            //                                                   fontSize: 14,
+            //                                                   fontWeight:
+            //                                                       FontWeight
+            //                                                           .bold,
+            //                                                   color:
+            //                                                       Colors.black),
+            //                                             ),
+            //                                             const SizedBox(
+            //                                               width: 4,
+            //                                             ),
+            //                                           ],
+            //                                         ),
+            //                                         Padding(
+            //                                           padding:
+            //                                               const EdgeInsets.only(
+            //                                                   top: 4,
+            //                                                   right: 15),
+            //                                           child: Row(
+            //                                             mainAxisAlignment:
+            //                                                 MainAxisAlignment
+            //                                                     .end,
+            //                                             children: <Widget>[
+            //                                               Text(
+            //                                                 item.courseday,
+            //                                                 style: TextStyle(
+            //                                                     fontSize: 14,
+            //                                                     color: Colors
+            //                                                         .black),
+            //                                               ),
+            //                                             ],
+            //                                           ),
+            //                                         ),
+            //                                       ],
+            //                                     ),
+            //                                   ),
+            //                                 ),
+            //                               ),
+            //                             ],
+            //                           ),
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     Positioned(
+            //                       top: 8,
+            //                       right: 8,
+            //                       child: Material(
+            //                         color: Colors.transparent,
+            //                         child: InkWell(
+            //                           borderRadius: const BorderRadius.all(
+            //                             Radius.circular(32.0),
+            //                           ),
+            //                           onTap: () {
+            //                             print(
+            //                                 "you are unable to register any course");
+            //                             // registerCourse(
+            //                             //     CourseList
+            //                             //         .cl[
+            //                             //             index]
+            //                             //         .coursename,
+            //                             //     CourseList
+            //                             //         .cl[
+            //                             //             index]
+            //                             //         .courseday,
+            //                             //     CourseList
+            //                             //         .cl[
+            //                             //             index]
+            //                             //         .coursetime,
+            //                             //     CourseList
+            //                             //         .cl[index]
+            //                             //         .drofficehrs);
+            //                             showAlertDialog(context);
+            //                           },
+            //                           child: Padding(
+            //                             padding: const EdgeInsets.all(8.0),
+            //                             child: Icon(
+            //                               Icons.add,
+            //                               size: 40,
+            //                               color: HotelAppTheme.buildLightTheme()
+            //                                   .primaryColor,
+            //                             ),
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     )
+            //                   ],
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // );
+            //CourseList.cl = new List();
+          });
+        },
+        clearOnSubmit: true,
+        key: key,
+        suggestions: CourseList.cl,
+        itemBuilder: (context, item) {
+          int count = 1; //CourseList.cl.length;
+          //   CourseList.cl = new List();
+          Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0)
+              .animate(CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 1, 1.0,
+                      curve: Curves.fastOutSlowIn)));
+          animationController.forward();
+          return AnimatedBuilder(
+            animation: animationController,
+            builder: (BuildContext context, Widget child) {
+              return FadeTransition(
+                opacity: animation,
+                child: Transform(
+                  transform: Matrix4.translationValues(
+                      0.0, 50 * (1.0 - animation.value), 0.0),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 24, right: 24, top: 8, bottom: 16),
+                    child: InkWell(
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        //  callback();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color:
+                              HotelAppTheme.buildLightTheme().backgroundColor,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(38.0),
+                          ),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                offset: const Offset(0, 2),
+                                blurRadius: 8.0),
+                          ],
+                        ),
+                        // decoration: BoxDecoration(
+                        //   borderRadius:
+                        //       const BorderRadius.all(Radius.circular(16.0)),
+                        //   boxShadow: <BoxShadow>[
+                        //     BoxShadow(
+                        //       color: Colors.grey.withOpacity(0.6),
+                        //       offset: const Offset(4, 4),
+                        //       blurRadius: 16,
+                        //     ),
+                        //   ],
+                        // ),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(16.0)),
+                          child: Stack(
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  AspectRatio(
+                                    aspectRatio: 2,
+                                    child: Image.asset(
+                                      'assets/logo1.jpg',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Container(
+                                    color: HotelAppTheme.buildLightTheme()
+                                        .backgroundColor,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16,
+                                                  top: 20,
+                                                  bottom: 20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    item.coursename,
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 22,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        item.coursetime,
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 4, right: 15),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          item.courseday,
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(32.0),
+                                    ),
+                                    onTap: () {
+                                      print(
+                                          "you are unable to register any course");
+                                      _showSnackBarMag(
+                                          "You are unable to register course now...wait until registration time.");
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 40,
+                                        color: HotelAppTheme.buildLightTheme()
+                                            .primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        itemSorter: (a, b) {
+          return a.coursename.compareTo(b.coursename);
+        },
+        itemFilter: (item, query) {
+          return item.coursename.toLowerCase().startsWith(query.toLowerCase());
+        });
+
     super.initState();
   }
 
@@ -119,12 +524,21 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldstate =
+      new GlobalKey<ScaffoldState>();
+
+  void _showSnackBarMag(String msg) {
+    _scaffoldstate.currentState
+        .showSnackBar(new SnackBar(content: new Text(msg)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
         child: Scaffold(
+          key: _scaffoldstate,
           appBar: AppBar(
               automaticallyImplyLeading: false,
               centerTitle: true,
@@ -364,8 +778,10 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
                                                                 //     CourseList
                                                                 //         .cl[index]
                                                                 //         .drofficehrs);
-                                                                showAlertDialog(
-                                                                    context);
+                                                                // showAlertDialog(
+                                                                //     context);
+                                                                _showSnackBarMag(
+                                                                    "You are unable to register course now...wait until registration time.");
                                                               },
                                                               child: Padding(
                                                                 padding:
@@ -462,69 +878,41 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: HotelAppTheme.buildLightTheme().backgroundColor,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(38.0),
-                  ),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        offset: const Offset(0, 2),
-                        blurRadius: 8.0),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 4, bottom: 4),
-                  child: TextField(
-                    onChanged: (String txt) {},
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                    cursorColor: HotelAppTheme.buildLightTheme().primaryColor,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Search for any course to register',
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+                child: searchTextField),
           ),
           Container(
-            decoration: BoxDecoration(
-              color: HotelAppTheme.buildLightTheme().primaryColor,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(38.0),
-              ),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.4),
-                    offset: const Offset(0, 2),
-                    blurRadius: 8.0),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
+              decoration: BoxDecoration(
+                color: HotelAppTheme.buildLightTheme().primaryColor,
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(32.0),
+                  Radius.circular(38.0),
                 ),
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.search,
-                      size: 20,
-                      color: HotelAppTheme.buildLightTheme().backgroundColor),
-                ),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.grey.withOpacity(0.4),
+                      offset: const Offset(0, 2),
+                      blurRadius: 8.0),
+                ],
               ),
-            ),
-          ),
+              child: Container()
+              //  Material(
+              //   color: Colors.transparent,
+              //   child: InkWell(
+              //     borderRadius: const BorderRadius.all(
+              //       Radius.circular(32.0),
+              //     ),
+              //     onTap: () {
+              //       FocusScope.of(context).requestFocus(FocusNode());
+              //     },
+              //     child: Padding(
+              //         padding: const EdgeInsets.all(16.0), child: Container()
+              //         // Icon(FontAwesomeIcons.search,
+              //         //     size: 20,
+              //         //     color: HotelAppTheme.buildLightTheme().backgroundColor),
+              //         ),
+              //   ),
+              // ),
+              ),
         ],
       ),
     );

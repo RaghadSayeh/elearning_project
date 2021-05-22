@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'MeetingData.dart';
 import 'MeetingList.dart';
+import 'package:flutter_appavailability/flutter_appavailability.dart';
 
 class HomePageStudent extends StatefulWidget {
   _HomePageStudentState createState() => _HomePageStudentState();
@@ -217,7 +218,7 @@ class _HomePageStudentState extends State<HomePageStudent> {
                                 ),
                                 Container(
                                     padding: const EdgeInsets.all(0),
-                                    height: 45,
+                                    height: 50, //45,
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).primaryColor,
                                       borderRadius: BorderRadius.only(
@@ -234,7 +235,18 @@ class _HomePageStudentState extends State<HomePageStudent> {
                                             child: GestureDetector(
                                               onTap: () {
                                                 print(
-                                                    "Join meeting feature will be implemented later");
+                                                    "Join meeting feature inside student view");
+                                                AppAvailability.launchApp(
+                                                        //https://play.google.com/store/apps/details?id=us.zoom.videomeetings
+                                                        'us.zoom.videomeetings')
+                                                    .then((response) {
+                                                  print(
+                                                      "open app successfully");
+                                                }).catchError((err) {
+                                                  print(
+                                                      "catch error when open app");
+                                                  print(err);
+                                                });
                                               },
                                               child: new Text(
                                                 "Join the meeting",
@@ -252,7 +264,7 @@ class _HomePageStudentState extends State<HomePageStudent> {
                         ),
                       )),
                   margin: EdgeInsets.only(top: 8, left: 10, right: 10),
-                  height: 200,
+                  height: 240,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
                   ),

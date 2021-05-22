@@ -153,8 +153,8 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
                   child: Column(
                     children: [
                       new Container(
-                          width: 160.0,
-                          height: 160.0,
+                          width: 140.0,
+                          height: 140.0,
                           decoration: new BoxDecoration(
                               shape: BoxShape.circle,
                               image: new DecorationImage(

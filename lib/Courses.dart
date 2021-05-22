@@ -37,6 +37,7 @@ class _CoursesState extends State<Courses> {
         String day = doclist['day'];
         String coursetime = doclist['coursetime'];
         String officehrs = doclist['officehrs'];
+        String drid = doclist['doctortable'];
 
         CourseData cd = new CourseData();
         cd.drname = drname;
@@ -44,6 +45,7 @@ class _CoursesState extends State<Courses> {
         cd.courseday = day;
         cd.coursetime = coursetime;
         cd.drofficehrs = officehrs;
+        cd.drid = drid;
 
         CourseList.cl.add(cd);
         print("student course length is");
@@ -204,56 +206,6 @@ class _CoursesState extends State<Courses> {
                                       CourseList.cl[index].coursetime);
                                   //   ]
                                 }))),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: <Widget>[
-                //     Container(
-                //       height: 65.0,
-                //       width: 60.0,
-                //       decoration: BoxDecoration(
-                //         border: Border.all(
-                //             color: Colors.grey,
-                //             style: BorderStyle.solid,
-                //             width: 1.0),
-                //         borderRadius: BorderRadius.circular(10.0),
-                //       ),
-                //       child: Center(
-                //         child: Icon(Icons.search, color: Colors.black),
-                //       ),
-                //     ),
-                //     Container(
-                //       height: 65.0,
-                //       width: 60.0,
-                //       decoration: BoxDecoration(
-                //         border: Border.all(
-                //             color: Colors.grey,
-                //             style: BorderStyle.solid,
-                //             width: 1.0),
-                //         borderRadius: BorderRadius.circular(10.0),
-                //       ),
-                //       child: Center(
-                //         child: Icon(Icons.shopping_basket, color: Colors.black),
-                //       ),
-                //     ),
-                //     Container(
-                //       height: 65.0,
-                //       width: 120.0,
-                //       decoration: BoxDecoration(
-                //           border: Border.all(
-                //               color: Colors.grey,
-                //               style: BorderStyle.solid,
-                //               width: 1.0),
-                //           borderRadius: BorderRadius.circular(10.0),
-                //           color: Color(0xFF1C1428)),
-                //       child: Center(
-                //           child: Text('Checkout',
-                //               style: TextStyle(
-                //                   //  fontFamily: 'Montserrat',
-                //                   color: Colors.white,
-                //                   fontSize: 15.0))),
-                //     )
-                //   ],
-                // )
               ],
             ),
           )
@@ -288,11 +240,14 @@ class _CoursesState extends State<Courses> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(coursename,
-                            style: TextStyle(
-                                //   fontFamily: 'Montserrat',
-                                fontSize: 19.0,
-                                fontWeight: FontWeight.bold)),
+                        Container(
+                          constraints: BoxConstraints(maxWidth: 200),
+                          child: Text(coursename,
+                              style: TextStyle(
+                                  //   fontFamily: 'Montserrat',
+                                  fontSize: 19.0,
+                                  fontWeight: FontWeight.bold)),
+                        ),
                         Text(drname,
                             style: TextStyle(
                                 //  fontFamily: 'Montserrat',

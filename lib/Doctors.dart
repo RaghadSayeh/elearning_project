@@ -111,7 +111,7 @@ class _DoctorsState extends State<Doctors> {
     var url = 'https://crenelate-intervals.000webhostapp.com/getDoctors.php';
     print("the data is");
 
-    var response = await http.get(url);
+    var response = await http.post(url, body: {"StudentId": UserDta.userid});
 
     print("status code is");
     print(response.statusCode);
@@ -127,9 +127,10 @@ class _DoctorsState extends State<Doctors> {
       List<dynamic> jsonObj = res;
       for (int i = 0; i < jsonObj.length; i++) {
         Map<String, dynamic> doclist = jsonObj[i];
-        String username = doclist['username'];
+        String username = doclist['drname'];
         String email = doclist['email'];
         String phoneno = doclist['phoneno'];
+        String drid = doclist['drid'];
 
         print(username);
         print(email);
@@ -139,6 +140,7 @@ class _DoctorsState extends State<Doctors> {
         sd.email = email;
         sd.username = username;
         sd.phoneNo = phoneno;
+        sd.drid = drid;
 
         DoctorList.doclist.add(sd);
       }
@@ -345,6 +347,8 @@ class _DoctorsState extends State<Doctors> {
                                                 DoctorList.doclist[index].email;
                                             MeetingDetail.phoneno = DoctorList
                                                 .doclist[index].phoneNo;
+                                            MeetingDetail.doctorid =
+                                                DoctorList.doclist[index].drid;
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(

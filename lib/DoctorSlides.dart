@@ -236,7 +236,98 @@ class DoctorSlidesState extends State<DoctorSlides> {
       setState(() {
         getAllFiles();
       });
+
+      getStudentlist(coursename, "New file uploaded",
+          "Your doctor upload new document for: " + coursename);
     } catch (e) {}
+  }
+
+  Future getStudentlist(String course, String content, String exp) async {
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getStudentlist.php';
+    print("user id is:");
+    print(UserDta.userid);
+
+    var response = await http.post(url, body: {"course": course});
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get student list') {
+      print("Failed to get student list");
+    } else {
+      print("get student list successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String StudentId = doclist['StudentId'];
+        String StudentName = doclist['StudentName'];
+
+        sendNotiifcation(StudentId, exp, content);
+      }
+      setState(() {});
+    }
+  }
+
+  Future sendNotiifcation(String userid, String exp, String content) async {
+    print("sendNotiifcation api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/sendNotification.php';
+
+    var response = await http.post(url, body: {
+      "userid": userid,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to send notification') {
+      print("Failed to send notification");
+    } else {
+      print("send notification successfully");
+      addNotification(userid, exp, content);
+      setState(() {});
+    }
+  }
+
+  Future addNotification(String recid, String exp, String content) async {
+    print("add new item api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/addNotificationContent.php';
+
+    DateTime now = new DateTime.now();
+    // DateTime date = new DateTime(now.year, now.month, now.day);
+
+    var response = await http.post(url, body: {
+      "senderid": UserDta.userid,
+      "recid": recid,
+      "content": content,
+      "exp": exp,
+      "datess": now.toString()
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'New notificationcontent added Successfully') {
+      print("New notificationcontent added Successfully");
+      // getDoctorTable();
+      //getOrdersTrack();
+      setState(() {});
+      //  showAlertDialog(context, sellername);
+    } else {
+      print("Failed to add notification content");
+    }
   }
 
   @override

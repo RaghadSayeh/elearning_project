@@ -8,6 +8,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'UserDta.dart';
 import 'DoctorStuMeeting.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_appavailability/flutter_appavailability.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class DoctorMeetingWithStu extends StatefulWidget {
   _DoctorMeetingWithStuState createState() => _DoctorMeetingWithStuState();
@@ -63,6 +66,158 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
       }
       setState(() {});
     }
+  }
+
+  Future delayMeeting(
+      String studentid, String meetingdat, String coursename) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/delayMeeting.php';
+    print("delayMeeting is called");
+
+    var response = await http.post(url, body: {
+      "studentid": studentid,
+      "doctorid": UserDta.userid,
+      "meetingdate": meetingdat,
+      "coursename": coursename,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+
+    final res = json.decode(response.body);
+    if (res == 'delay meeting with student') {
+      print("delay meeting with student");
+      sendNotiifcation(
+          studentid,
+          "You have a meeting delayed from a doctor for this course : " +
+              coursename,
+          "Some meeting delayed");
+      showAlertDialog(context);
+    } else {
+      print("failed to delay meeting");
+    }
+  }
+
+  Future cancelMeeting(String studentid, String coursename) async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/deleteMeeting.php';
+    print("cancelMeeting is called");
+
+    var response = await http.post(url, body: {
+      "studentid": studentid,
+      "doctorid": UserDta.userid,
+      "coursename": coursename,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+
+    final res = json.decode(response.body);
+    if (res == 'the meeting deleted successfully') {
+      print("the meeting deleted successfully");
+      sendNotiifcation(
+          studentid,
+          "You have a meeting cancelled from a doctor for this course : " +
+              coursename,
+          "Some meeting cancelled");
+      //  Fluttertoa
+      showAlertDialog(context);
+    } else {
+      print("failed to delete meeting");
+    }
+  }
+
+  Future sendNotiifcation(String userid, String exp, String content) async {
+    print("sendNotiifcation api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/sendNotification.php';
+
+    var response = await http.post(url, body: {
+      "userid": userid,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to send notification') {
+      print("Failed to send notification");
+    } else {
+      print("send notification successfully");
+      addNotification(userid, exp, content);
+      // addNotification(userid, "استلام طلب بنجاح",
+      //   "تم استلام هذا الطلب بنجاح للتاكد يرجى الذهاب الى الصفحة المخصصة");
+      setState(() {});
+    }
+  }
+
+  Future addNotification(String recid, String exp, String content) async {
+    print("add new item api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/addNotificationContent.php';
+
+    DateTime now = new DateTime.now();
+    // DateTime date = new DateTime(now.year, now.month, now.day);
+
+    var response = await http.post(url, body: {
+      "senderid": UserDta.userid,
+      "recid": recid,
+      "content": content,
+      "exp": exp,
+      "datess": now.toString()
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'New notificationcontent added Successfully') {
+      print("New notificationcontent added Successfully");
+      // getDoctorTable();
+      //getOrdersTrack();
+      setState(() {});
+      //  showAlertDialog(context, sellername);
+    } else {
+      print("Failed to add notification content");
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(
+        "OK",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+        setState(() {});
+        getDoctorTable();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "Updated successfully",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: Text("Your profile updated successfully, enjoy your career."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -222,6 +377,14 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
                             ),
                             onPressed: () {
                               print("join the meeting in the future");
+                              AppAvailability.launchApp(
+                                  //https://play.google.com/store/apps/details?id=us.zoom.videomeetings
+                                  'us.zoom.videomeetings').then((response) {
+                                print("open app successfully");
+                              }).catchError((err) {
+                                print("catch error when open app");
+                                print(err);
+                              });
                               // function();
                             },
                           ),
@@ -276,7 +439,7 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
                 return Container(
                   margin: EdgeInsets.all(12),
                   width: 200,
-                  height: 120,
+                  height: 140,
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -287,32 +450,92 @@ class _DoctorMeetingWithStuState extends State<DoctorMeetingWithStu> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         new ListTile(
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: EdgeInsets.all(18),
                           leading: Icon(
                             Icons.video_call,
                             size: 60,
                             color: Colors.white,
                           ),
-                          trailing: GestureDetector(
-                            onTap: () {
-                              _registerSheet(
-                                  DoctorStuMeetinglist.li[index].coursename,
-                                  DoctorStuMeetinglist.li[index].studentid,
-                                  DoctorStuMeetinglist.li[index].about,
-                                  DoctorStuMeetinglist.li[index].meetingdate);
-                            },
-                            child: Icon(
-                              Icons.arrow_forward,
-                              size: 25,
-                              color: Colors.white,
-                            ),
+                          // trailing: GestureDetector(
+                          //   onTap: () {
+                          //     _registerSheet(
+                          //         DoctorStuMeetinglist.li[index].coursename,
+                          //         DoctorStuMeetinglist.li[index].studentid,
+                          //         DoctorStuMeetinglist.li[index].about,
+                          //         DoctorStuMeetinglist.li[index].meetingdate);
+                          //   },
+                          //   child: Icon(
+                          //     Icons.arrow_forward,
+                          //     size: 25,
+                          //     color: Colors.white,
+                          //   ),
+                          // ),
+                          title: Center(
+                            child: Text(
+                                DoctorStuMeetinglist.li[index].studentname,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
                           ),
-                          title: Text(
-                              DoctorStuMeetinglist.li[index].studentname,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    cancelMeeting(
+                                        DoctorStuMeetinglist
+                                            .li[index].studentid,
+                                        DoctorStuMeetinglist
+                                            .li[index].coursename);
+                                  }),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    DatePicker.showDateTimePicker(context,
+                                        showTitleActions: true,
+                                        minTime: DateTime(2020, 5, 5, 20, 50),
+                                        maxTime: DateTime(2021, 12, 30, 05, 09),
+                                        onChanged: (date) {
+                                      print('change $date in time zone ' +
+                                          date.timeZoneOffset.inHours
+                                              .toString());
+                                    }, onConfirm: (date) {
+                                      print('confirm $date');
+                                      int idx = date.toString().indexOf(' ');
+                                      print("idx is:$idx");
+                                      delayMeeting(
+                                          DoctorStuMeetinglist
+                                              .li[index].studentid,
+                                          date.toString(),
+                                          DoctorStuMeetinglist
+                                              .li[index].coursename);
+                                    }, locale: LocaleType.en);
+                                  }),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.more_vert,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    _registerSheet(
+                                        DoctorStuMeetinglist
+                                            .li[index].coursename,
+                                        DoctorStuMeetinglist
+                                            .li[index].studentid,
+                                        DoctorStuMeetinglist.li[index].about,
+                                        DoctorStuMeetinglist
+                                            .li[index].meetingdate);
+                                  })
+                            ],
+                          ),
                         ),
                       ],
                     ),

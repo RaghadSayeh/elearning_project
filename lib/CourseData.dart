@@ -4,4 +4,5 @@ class CourseData {
   String courseday = "";
   String coursetime = "";
   String drofficehrs = "";
+  String drid = "";
 }

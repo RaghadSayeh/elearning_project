@@ -98,9 +98,72 @@ class _ScheduleMeetingState extends State<ScheduleMeeting>
     final res = json.decode(response.body);
     if (res == 'Added new meeting successfully') {
       print("Added new meeting successfully");
+      sendNotiifcation(
+          MeetingDetail.doctorid,
+          "You have a new meeting, check your meeting page",
+          "New meeting added");
       showAlertDialog(context);
     } else {
       print("from static dta");
+    }
+  }
+
+  Future sendNotiifcation(String userid, String exp, String content) async {
+    print("sendNotiifcation api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/sendNotification.php';
+
+    var response = await http.post(url, body: {
+      "userid": userid,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to send notification') {
+      print("Failed to send notification");
+    } else {
+      print("send notification successfully");
+      addNotification(userid, exp, content);
+      // addNotification(userid, "استلام طلب بنجاح",
+      //   "تم استلام هذا الطلب بنجاح للتاكد يرجى الذهاب الى الصفحة المخصصة");
+      setState(() {});
+    }
+  }
+
+  Future addNotification(String recid, String exp, String content) async {
+    print("add new item api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/addNotificationContent.php';
+
+    DateTime now = new DateTime.now();
+    // DateTime date = new DateTime(now.year, now.month, now.day);
+
+    var response = await http.post(url, body: {
+      "senderid": UserDta.userid,
+      "recid": recid,
+      "content": content,
+      "exp": exp,
+      "datess": now.toString()
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'New notificationcontent added Successfully') {
+      print("New notificationcontent added Successfully");
+      // getDoctorTable();
+      //getOrdersTrack();
+      setState(() {});
+      //  showAlertDialog(context, sellername);
+    } else {
+      print("Failed to add notification content");
     }
   }
 

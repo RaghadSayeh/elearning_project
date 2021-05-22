@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'ExamsData.dart';
 import 'UserDta.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const CURVE_HEIGHT = 170.0;
 const AVATAR_RADIUS = CURVE_HEIGHT * 0.0;
@@ -151,9 +152,150 @@ class DoctorExamsState extends State<DoctorExams> {
     }
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _registerSheet(String firste, String seconde, String finale) {
+    _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+      return DecoratedBox(
+        decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(40.0)),
+          child: Container(
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: 10,
+                        top: 10,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            size: 30.0,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  height: 50,
+                  width: 50,
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.only(left: 40),
+                          height: 140,
+                          child: Container(
+                            child: new Text("Learno",
+                                style: GoogleFonts.pacifico(
+                                  fontSize: 50,
+                                  color: Colors.indigo[800],
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 150.0,
+                                      color: Colors.white,
+                                      // offset: Offset(5.0, 5.0),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 20, top: 60, left: 30, right: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              new Text("First exam : ",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold)),
+                              firste.length > 17
+                                  ? new Text(firste.substring(0, 17),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
+                                  : new Text(firste,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 20, top: 20, left: 30, right: 30),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                new Text("Second exam :",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold)),
+                                Container(
+                                  constraints: BoxConstraints(maxWidth: 200),
+                                  child: new Text(seconde,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold)),
+                                )
+                              ]),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                bottom: 20, top: 20, left: 30, right: 30),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  new Text("Final exam : ",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold)),
+                                  new Container(
+                                    constraints: BoxConstraints(maxWidth: 200),
+                                    child: Text(finale,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)),
+                                  )
+                                ])),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ]),
+                ),
+              ],
+            ),
+            height: MediaQuery.of(context).size.height / 1.1,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+          ),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -176,11 +318,28 @@ class DoctorExamsState extends State<DoctorExams> {
       body: new ListView.builder(
           itemCount: ExamsDataList.li.length,
           itemBuilder: (BuildContext ctxt, int index) {
-            return new CurvedListItem(
-              title: ExamsDataList.li[index].course,
-              time: 'TODAY 5:30 PM',
-              color: Colors.white,
-              nextColor: Colors.indigo[800],
+            return new GestureDetector(
+              onTap: () {
+                _registerSheet(
+                    ExamsDataList.li[index].firstdate +
+                        ExamsDataList.li[index].firsttime,
+                    ExamsDataList.li[index].seconddate +
+                        ExamsDataList.li[index].secondtime,
+                    ExamsDataList.li[index].finaldate +
+                        ExamsDataList.li[index].finaltime);
+              },
+              child: CurvedListItem(
+                title: ExamsDataList.li[index].course,
+                fst: ExamsDataList.li[index].firstdate +
+                    ExamsDataList.li[index].firsttime,
+                sec: ExamsDataList.li[index].seconddate +
+                    ExamsDataList.li[index].secondtime,
+                fin: ExamsDataList.li[index].finaldate +
+                    ExamsDataList.li[index].finaltime,
+                time: 'TODAY 5:30 PM',
+                color: Colors.white,
+                nextColor: Colors.indigo[800],
+              ),
             );
           }),
       bottomNavigationBar: BottomNavigationBar(
@@ -226,6 +385,9 @@ class DoctorExamsState extends State<DoctorExams> {
 
 class CurvedListItem extends StatefulWidget {
   final String title;
+  final String fst;
+  final String sec;
+  final String fin;
   final String time;
   final String people;
   final IconData icon;
@@ -233,18 +395,24 @@ class CurvedListItem extends StatefulWidget {
   final Color nextColor;
   const CurvedListItem({
     this.title,
+    this.fst,
+    this.sec,
+    this.fin,
     this.time,
     this.icon,
     this.people,
     this.color,
     this.nextColor,
   });
-  CurvedListItemState createState() =>
-      CurvedListItemState(title, time, icon, people, color, nextColor);
+  CurvedListItemState createState() => CurvedListItemState(
+      title, fst, sec, fin, time, icon, people, color, nextColor);
 }
 
 class CurvedListItemState extends State<CurvedListItem> {
   String title;
+  String fst;
+  String sec;
+  String fin;
   String time;
   String people;
   IconData icon;
@@ -253,12 +421,74 @@ class CurvedListItemState extends State<CurvedListItem> {
 
   CurvedListItemState(
     this.title,
+    this.fst,
+    this.sec,
+    this.fin,
     this.time,
     this.icon,
     this.people,
     this.color,
     this.nextColor,
   );
+
+  Future sendNotiifcation(String userid, String exp, String content) async {
+    print("sendNotiifcation api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/sendNotification.php';
+
+    var response = await http.post(url, body: {
+      "userid": userid,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to send notification') {
+      print("Failed to send notification");
+    } else {
+      print("send notification successfully");
+      addNotification(userid, exp, content);
+      // addNotification(userid, "استلام طلب بنجاح",
+      //   "تم استلام هذا الطلب بنجاح للتاكد يرجى الذهاب الى الصفحة المخصصة");
+      setState(() {});
+    }
+  }
+
+  Future addNotification(String recid, String exp, String content) async {
+    print("add new item api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/addNotificationContent.php';
+
+    DateTime now = new DateTime.now();
+    // DateTime date = new DateTime(now.year, now.month, now.day);
+
+    var response = await http.post(url, body: {
+      "senderid": UserDta.userid,
+      "recid": recid,
+      "content": content,
+      "exp": exp,
+      "datess": now.toString()
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'New notificationcontent added Successfully') {
+      print("New notificationcontent added Successfully");
+      // getDoctorTable();
+      //getOrdersTrack();
+      setState(() {});
+      //  showAlertDialog(context, sellername);
+    } else {
+      print("Failed to add notification content");
+    }
+  }
 
   Future<void> updatefirst(String fdate, String ftime) async {
     var url = 'https://crenelate-intervals.000webhostapp.com/updateExams.php';
@@ -273,14 +503,47 @@ class CurvedListItemState extends State<CurvedListItem> {
 
     print("status code is");
     print(response.statusCode);
-    // print(json.decode(response.body));
 
     final res = json.decode(response.body);
     if (res == 'exams updated successfully') {
       print("exams updated successfully");
+      getStudentlist(this.title, "First exam assigned",
+          "Your doctor set first exam date for :" + this.title);
+
       showAlertDialog(context);
     } else {
       print("failed to set exam date");
+    }
+  }
+
+  Future getStudentlist(String course, String content, String exp) async {
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getStudentlist.php';
+    print("user id is:");
+    print(UserDta.userid);
+
+    var response = await http.post(url, body: {"course": course});
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get student list') {
+      print("Failed to get student list");
+    } else {
+      print("get student list successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String StudentId = doclist['StudentId'];
+        String StudentName = doclist['StudentName'];
+
+        sendNotiifcation(StudentId, exp, content);
+      }
+      setState(() {});
     }
   }
 
@@ -302,6 +565,9 @@ class CurvedListItemState extends State<CurvedListItem> {
     final res = json.decode(response.body);
     if (res == 'exams updated successfully') {
       print("exams updated successfully");
+      getStudentlist(this.title, "Second exam assigned",
+          "Your doctor set second exam date for :" + this.title);
+
       showAlertDialog(context);
     } else {
       print("failed to set exam date");
@@ -326,9 +592,61 @@ class CurvedListItemState extends State<CurvedListItem> {
     final res = json.decode(response.body);
     if (res == 'exams updated successfully') {
       print("exams updated successfully");
+
+      getStudentlist(this.title, "Final exam assigned",
+          "Your doctor set final exam date for :" + this.title);
       showAlertDialog(context);
     } else {
       print("failed to set exam date");
+    }
+  }
+
+  Future getDoctorTable() async {
+    ExamsDataList.li = new List();
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/getDoctorExams.php';
+    print("user id is:");
+    print(UserDta.userid);
+
+    var response = await http.post(url,
+        body: {"doctorid": UserDta.userid, "drname": UserDta.username});
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get doctors exams') {
+      print("Failed to get doctors exams");
+    } else {
+      print("get doctor exams successfully");
+
+      List<dynamic> jsonObj = res;
+      for (int i = 0; i < jsonObj.length; i++) {
+        Map<String, dynamic> doclist = jsonObj[i];
+        String otherinfo = doclist['otherinfo'];
+        String finaltime = doclist['finaltime'];
+        String finaldate = doclist['finaldate'];
+        String secondtime = doclist['secondtime'];
+        String seconddate = doclist['seconddate'];
+        String firsttime = doclist['firsttime'];
+        String firstdate = doclist['firstdate'];
+        String course = doclist['course'];
+
+        ExamsData ed = new ExamsData();
+        ed.otherinfo = otherinfo;
+        ed.finaltime = finaltime;
+        ed.finaldate = finaldate;
+        ed.secondtime = secondtime;
+        ed.seconddate = seconddate;
+        ed.finaltime = firsttime;
+        ed.firstdate = firstdate;
+        ed.course = course;
+
+        ExamsDataList.li.add(ed);
+      }
+      setState(() {});
     }
   }
 
@@ -342,6 +660,7 @@ class CurvedListItemState extends State<CurvedListItem> {
       ),
       onPressed: () {
         Navigator.pop(context);
+        getDoctorTable();
       },
     );
 
@@ -478,110 +797,258 @@ class CurvedListItemState extends State<CurvedListItem> {
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: nextColor,
-      child: Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(80.0),
-            bottomRight: Radius.circular(80.0),
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _registerSheet() {
+    _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
+      return DecoratedBox(
+        decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(40.0)),
+          child: Container(
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: 10,
+                        top: 10,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            size: 30.0,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  height: 50,
+                  width: 50,
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.only(left: 40),
+                          height: 140,
+                          child: Container(
+                            child: new Text("Learno",
+                                style: GoogleFonts.pacifico(
+                                  fontSize: 50,
+                                  color: Colors.indigo[800],
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 150.0,
+                                      color: Colors.white,
+                                      // offset: Offset(5.0, 5.0),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 20, top: 60, left: 30, right: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              new Text("First exam : ",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold)),
+                              this.fst.length > 17
+                                  ? new Text(this.fst.substring(0, 17),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
+                                  : new Text(this.fst,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 20, top: 20, left: 30, right: 30),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                new Text("Second exam :",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold)),
+                                new Text(this.sec,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold))
+                              ]),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                bottom: 20, top: 20, left: 30, right: 30),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  new Text("Final exam : ",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold)),
+                                  new Text(this.fin,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold))
+                                ])),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ]),
+                ),
+              ],
+            ),
+            height: MediaQuery.of(context).size.height / 1.1,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
           ),
         ),
-        padding: const EdgeInsets.only(
-          //  left: 32,
-          top: 40.0,
-          bottom: 35,
-        ),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                        color: Colors.indigo[800],
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
+      );
+    });
+  }
+  // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return
+        //key: _scaffoldKey,
+        //Key:__sc
+        // body:
+        Container(
+            color: nextColor,
+            child: GestureDetector(
+              onTap: () {
+                _registerSheet();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(80.0),
+                    bottomRight: Radius.circular(80.0),
                   ),
-                ],
+                ),
+                padding: const EdgeInsets.only(
+                  //  left: 32,
+                  top: 40.0,
+                  bottom: 35,
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                                color: Colors.indigo[800],
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              DatePicker.showDateTimePicker(context,
+                                  showTitleActions: true,
+                                  minTime: DateTime(2020, 5, 5, 20, 50),
+                                  maxTime: DateTime(2021, 12, 30, 05, 09),
+                                  onChanged: (date) {
+                                print('change $date in time zone ' +
+                                    date.timeZoneOffset.inHours.toString());
+                              }, onConfirm: (date) {
+                                print('confirm $date');
+                                int idx = date.toString().indexOf(' ');
+                                print("idx is:$idx");
+                                updatefirst(date.toString().substring(0, idx),
+                                    date.toString().substring(idx + 1));
+                              }, locale: LocaleType.en);
+                            },
+                            child: new Text("First",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          GestureDetector(
+                              onTap: () {
+                                DatePicker.showDateTimePicker(context,
+                                    showTitleActions: true,
+                                    minTime: DateTime(2020, 5, 5, 20, 50),
+                                    maxTime: DateTime(2021, 12, 30, 05, 09),
+                                    onChanged: (date) {
+                                  print('change $date in time zone ' +
+                                      date.timeZoneOffset.inHours.toString());
+                                }, onConfirm: (date) {
+                                  print('confirm $date');
+                                  int idx = date.toString().indexOf(' ');
+                                  print("idx is:$idx");
+                                  updatesecond(
+                                      date.toString().substring(0, idx),
+                                      date.toString().substring(idx + 1));
+                                }, locale: LocaleType.en);
+                              },
+                              child: new Text("Second",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          GestureDetector(
+                              onTap: () {
+                                DatePicker.showDateTimePicker(context,
+                                    showTitleActions: true,
+                                    minTime: DateTime(2020, 5, 5, 20, 50),
+                                    maxTime: DateTime(2021, 12, 30, 05, 09),
+                                    onChanged: (date) {
+                                  print('change $date in time zone ' +
+                                      date.timeZoneOffset.inHours.toString());
+                                }, onConfirm: (date) {
+                                  print('confirm $date');
+                                  int idx = date.toString().indexOf(' ');
+                                  print("idx is:$idx");
+                                  updatefinal(date.toString().substring(0, idx),
+                                      date.toString().substring(idx + 1));
+                                }, locale: LocaleType.en);
+                              },
+                              child: new Text("Final",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                        ],
+                      )
+                    ]),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      DatePicker.showDateTimePicker(context,
-                          showTitleActions: true,
-                          minTime: DateTime(2020, 5, 5, 20, 50),
-                          maxTime: DateTime(2021, 12, 30, 05, 09),
-                          onChanged: (date) {
-                        print('change $date in time zone ' +
-                            date.timeZoneOffset.inHours.toString());
-                      }, onConfirm: (date) {
-                        print('confirm $date');
-                        int idx = date.toString().indexOf(' ');
-                        print("idx is:$idx");
-                        updatefirst(date.toString().substring(0, idx),
-                            date.toString().substring(idx + 1));
-                      }, locale: LocaleType.en);
-                    },
-                    child: new Text("First",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                  GestureDetector(
-                      onTap: () {
-                        DatePicker.showDateTimePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime(2020, 5, 5, 20, 50),
-                            maxTime: DateTime(2021, 12, 30, 05, 09),
-                            onChanged: (date) {
-                          print('change $date in time zone ' +
-                              date.timeZoneOffset.inHours.toString());
-                        }, onConfirm: (date) {
-                          print('confirm $date');
-                          int idx = date.toString().indexOf(' ');
-                          print("idx is:$idx");
-                          updatesecond(date.toString().substring(0, idx),
-                              date.toString().substring(idx + 1));
-                        }, locale: LocaleType.en);
-                      },
-                      child: new Text("Second",
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  GestureDetector(
-                      onTap: () {
-                        DatePicker.showDateTimePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime(2020, 5, 5, 20, 50),
-                            maxTime: DateTime(2021, 12, 30, 05, 09),
-                            onChanged: (date) {
-                          print('change $date in time zone ' +
-                              date.timeZoneOffset.inHours.toString());
-                        }, onConfirm: (date) {
-                          print('confirm $date');
-                          int idx = date.toString().indexOf(' ');
-                          print("idx is:$idx");
-                          updatefinal(date.toString().substring(0, idx),
-                              date.toString().substring(idx + 1));
-                        }, locale: LocaleType.en);
-                      },
-                      child: new Text("Final",
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                ],
-              )
-            ]),
-      ),
-    );
+            ));
+    //)
+    //)
   }
 }
 

@@ -18,10 +18,130 @@ class DoctorResultsStudentmark extends StatefulWidget {
 }
 
 class DoctorResultsStudentmarkState extends State<DoctorResultsStudentmark> {
+  AutoCompleteTextField searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<StudentResDetails>> key =
+      new GlobalKey();
   @override
   void initState() {
     super.initState();
     getStudentList();
+
+    searchTextField = AutoCompleteTextField<StudentResDetails>(
+        style: new TextStyle(color: Colors.black, fontSize: 16.0),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+            filled: true,
+            hintText: 'Search for student..',
+            hintStyle: TextStyle(color: Colors.black)),
+        itemSubmitted: (item) {
+          setState(() {
+            print("item submitted");
+            searchTextField.textField.controller.text = item.studentname;
+          });
+        },
+        clearOnSubmit: true,
+        key: key,
+        suggestions: StuResDetList.li,
+        itemBuilder: (context, item) {
+          return new ExpansionTile(
+              trailing: Icon(
+                Icons.arrow_drop_down,
+                size: 32,
+                color: Colors.indigo[800],
+              ),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      "First",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    item.firstd == 'NY'
+                        ? GestureDetector(
+                            onTap: () {
+                              enterMark(
+                                  context, item.studentid, 'First', 'first');
+                            },
+                            child: Text(
+                              "Tap to enter first mark",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          )
+                        : Text(
+                            item.firstd,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                  ],
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        "Second",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      item.second == 'NY'
+                          ? GestureDetector(
+                              onTap: () {
+                                enterMark(context, item.studentid, 'Second',
+                                    'second');
+                              },
+                              child: Text(
+                                "Enter second mark",
+                                style: TextStyle(fontSize: 18),
+                              ))
+                          : Text(
+                              item.second,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        "Final",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      item.finald == 'NY'
+                          ? GestureDetector(
+                              onTap: () {
+                                enterMark(
+                                    context, item.studentid, 'Final', 'final');
+                              },
+                              child: Text(
+                                "Enter final mark",
+                                style: TextStyle(fontSize: 18),
+                              ))
+                          : Text(
+                              item.finald,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                    ])
+              ],
+              onExpansionChanged: (value) {},
+              title: Container(
+                margin: EdgeInsets.all(6.0),
+                padding: EdgeInsets.all(16.0),
+
+                //  color: Colors.red,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    // color: Colors.red,
+                    borderRadius: new BorderRadius.circular(15.0),
+                    border: Border.all(color: Colors.indigo[800])),
+                child: Text(
+                  item.studentname,
+                  style: TextStyle(fontSize: 18),
+                ),
+              ));
+        },
+        itemSorter: (a, b) {
+          return a.studentname.compareTo(b.studentname);
+        },
+        itemFilter: (item, query) {
+          return item.studentname.toLowerCase().startsWith(query.toLowerCase());
+        });
   }
 
   TextEditingController markcont = new TextEditingController();
@@ -109,6 +229,10 @@ class DoctorResultsStudentmarkState extends State<DoctorResultsStudentmark> {
     final res = json.decode(response.body);
     if (res == 'first mark updated successfully') {
       print("first mark updated successfully");
+      sendNotiifcation(
+          studentid,
+          "Your first mark is now on your result page so kindly check it. ",
+          "First mark uploaded");
       showAlertDialog(context);
     } else {
       print("failed to update first mark");
@@ -131,6 +255,10 @@ class DoctorResultsStudentmarkState extends State<DoctorResultsStudentmark> {
     final res = json.decode(response.body);
     if (res == 'second mark updated successfully') {
       print("second mark updated successfully");
+      sendNotiifcation(
+          studentid,
+          "Your second mark is now on your result page so kindly check it. ",
+          "Second mark uploaded");
       showAlertDialog(context);
     } else {
       print("failed to update second mark");
@@ -153,9 +281,72 @@ class DoctorResultsStudentmarkState extends State<DoctorResultsStudentmark> {
     final res = json.decode(response.body);
     if (res == 'final mark updated successfully') {
       print("final mark updated successfully");
+      sendNotiifcation(
+          studentid,
+          "Your final mark is now on your result page so kindly check it. ",
+          "Final mark uploaded");
       showAlertDialog(context);
     } else {
       print("failed to update final mark");
+    }
+  }
+
+  Future sendNotiifcation(String userid, String exp, String content) async {
+    print("sendNotiifcation api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/sendNotification.php';
+
+    var response = await http.post(url, body: {
+      "userid": userid,
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to send notification') {
+      print("Failed to send notification");
+    } else {
+      print("send notification successfully");
+      addNotification(userid, exp, content);
+      // addNotification(userid, "استلام طلب بنجاح",
+      //   "تم استلام هذا الطلب بنجاح للتاكد يرجى الذهاب الى الصفحة المخصصة");
+      setState(() {});
+    }
+  }
+
+  Future addNotification(String recid, String exp, String content) async {
+    print("add new item api");
+    var url =
+        'https://crenelate-intervals.000webhostapp.com/addNotificationContent.php';
+
+    DateTime now = new DateTime.now();
+    // DateTime date = new DateTime(now.year, now.month, now.day);
+
+    var response = await http.post(url, body: {
+      "senderid": UserDta.userid,
+      "recid": recid,
+      "content": content,
+      "exp": exp,
+      "datess": now.toString()
+    });
+
+    print("status code is");
+    print(response.statusCode);
+    print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'New notificationcontent added Successfully') {
+      print("New notificationcontent added Successfully");
+      // getDoctorTable();
+      //getOrdersTrack();
+      setState(() {});
+      //  showAlertDialog(context, sellername);
+    } else {
+      print("Failed to add notification content");
     }
   }
 
@@ -344,31 +535,36 @@ class DoctorResultsStudentmarkState extends State<DoctorResultsStudentmark> {
               "Search for student and assign its marks",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
+            SizedBox(
+              height: 15,
+            ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 30),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              height: 60,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color(0xFFF5F5F7),
-                borderRadius: BorderRadius.circular(40),
-              ),
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(FontAwesomeIcons.search),
-                    onPressed: () {},
-                  ),
-                  SizedBox(width: 16),
-                  Text(
-                    "Search for student",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Color(0xFFA0A5BD),
-                    ),
-                  )
-                ],
-              ),
+              child: searchTextField,
+              // margin: EdgeInsets.symmetric(vertical: 30),
+              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              // height: 60,
+              // width: double.infinity,
+              // decoration: BoxDecoration(
+              //   color: Color(0xFFF5F5F7),
+              //   borderRadius: BorderRadius.circular(40),
+              // ),
+              // child:
+              //  Row(
+              //   children: <Widget>[
+              //     IconButton(
+              //       icon: Icon(FontAwesomeIcons.search),
+              //       onPressed: () {},
+              //     ),
+              //     SizedBox(width: 16),
+              //     Text(
+              //       "Search for student",
+              //       style: TextStyle(
+              //         fontSize: 18,
+              //         color: Color(0xFFA0A5BD),
+              //       ),
+              //     )
+              //   ],
+              // ),
             ),
             SizedBox(height: 15),
             StuResDetList.li.length == 0

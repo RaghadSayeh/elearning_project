@@ -276,9 +276,11 @@ class _WelcomePageState extends State<WelcomePage> {
       if (UserDta.logintype == 'Student') {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => new MainHomePage()));
-      } else {
+      } else if (UserDta.logintype == 'Teacher') {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => new HomePageDoctor()));
+      } else {
+        print("admin view");
       }
     }
   }

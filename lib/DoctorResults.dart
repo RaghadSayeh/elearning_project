@@ -21,11 +21,114 @@ class DoctorResults extends StatefulWidget {
 }
 
 class DoctorResultsState extends State<DoctorResults> {
+  AutoCompleteTextField searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<DoctorTable>> key = new GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldstate =
+      new GlobalKey<ScaffoldState>();
+  void _showSnackBarMag(String msg) {
+    _scaffoldstate.currentState
+        .showSnackBar(new SnackBar(content: new Text(msg)));
+  }
+
   @override
   void initState() {
     super.initState();
     print("DoctorResults is called");
     getDoctorTable();
+
+    searchTextField = AutoCompleteTextField<DoctorTable>(
+        style: new TextStyle(color: Colors.black, fontSize: 16.0),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+            filled: true,
+            hintText: 'Search for course..',
+            hintStyle: TextStyle(color: Colors.black)),
+        itemSubmitted: (item) {
+          setState(() {
+            print("item submitted");
+            searchTextField.textField.controller.text = item.coursename;
+          });
+        },
+        clearOnSubmit: true,
+        key: key,
+        suggestions: DoctorsTabList.dl,
+        itemBuilder: (context, item) {
+          return
+              // AnimationConfiguration.staggeredGrid(
+              //                     columnCount: 2,
+              //                     position: index,
+              //                     duration: const Duration(milliseconds: 375),
+              //                     child:
+              //   ScaleAnimation(
+              // scale: 0.5,
+              // child: FadeInAnimation(
+              //     child:
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                GestureDetector(
+                  onTap: () {
+                    CourseName.coursename = item.coursename;
+                    print("before go to DoctorResultStudentMarks");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                new DoctorResultsStudentmark()));
+                  },
+                  child:
+                      //  Column(
+                      //   mainAxisAlignment:
+                      //       MainAxisAlignment.start,
+                      //   crossAxisAlignment:
+                      //       CrossAxisAlignment.start,
+                      //   children: [
+                      Container(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: 120,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/docres.png"),
+                          fit: BoxFit.fill,
+                        ),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30))),
+                    child: new Text(" "),
+                  ),
+                  //   ],
+                  //   )
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  // mainAxisAlignment:
+                  //     MainAxisAlignment.start,
+                  // crossAxisAlignment:
+                  //     CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      item.coursename,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      // style: kTitleTextStyle,
+                    ),
+                  ],
+                ),
+              ]);
+          // ),
+          // );
+          // )
+          //;
+        },
+        itemSorter: (a, b) {
+          return a.coursename.compareTo(b.coursename);
+        },
+        itemFilter: (item, query) {
+          return item.coursename.toLowerCase().startsWith(query.toLowerCase());
+        });
   }
 
   Future getDoctorTable() async {
@@ -96,37 +199,44 @@ class DoctorResultsState extends State<DoctorResults> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            SizedBox(
+              height: 10,
+            ),
             Text(
               "Fill student marks for each course ",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 30),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              height: 60,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color(0xFFF5F5F7),
-                borderRadius: BorderRadius.circular(40),
-              ),
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(FontAwesomeIcons.search),
-                    onPressed: () {},
-                  ),
-                  //  SvgPicture.asset("assets/icons/search.svg"),
-                  SizedBox(width: 16),
-                  Text(
-                    "Search for course",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Color(0xFFA0A5BD),
-                    ),
-                  )
-                ],
-              ),
+            SizedBox(
+              height: 15,
             ),
+            Container(
+                // margin: EdgeInsets.symmetric(vertical: 30),
+                // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                // height: 60,
+                // width: double.infinity,
+                // decoration: BoxDecoration(
+                //   color: Color(0xFFF5F5F7),
+                //   borderRadius: BorderRadius.circular(40),
+                // ),
+                child: searchTextField
+                //  Row(
+                //   children: <Widget>[
+                //     IconButton(
+                //       icon: Icon(FontAwesomeIcons.search),
+                //       onPressed: () {},
+                //     ),
+                //     //  SvgPicture.asset("assets/icons/search.svg"),
+                //     SizedBox(width: 16),
+                //     Text(
+                //       "Search for course",
+                //       style: TextStyle(
+                //         fontSize: 18,
+                //         color: Color(0xFFA0A5BD),
+                //       ),
+                //     )
+                //   ],
+                // ),
+                ),
             SizedBox(height: 30),
             DoctorsTabList.dl.length == 0
                 ? Center(
@@ -136,12 +246,9 @@ class DoctorResultsState extends State<DoctorResults> {
                     ),
                   )
                 : Expanded(
-                    //DoctorsTabList.dl.length
                     child: AnimationLimiter(
                       child: GridView.count(
                         childAspectRatio: 1.0,
-
-                        // padding: const EdgeInsets.all(8.0),
                         crossAxisCount: 2,
                         children: List.generate(
                           DoctorsTabList.dl.length,
