@@ -71,11 +71,13 @@ class UsefulDocsState extends State<UsefulDocs> {
         String coursepath = doclist['path'];
         String coursename = doclist['coursename'];
         String uploaddate = doclist['uploaddate'];
+        String des = doclist['des'];
 
         DoctorDocs dd = new DoctorDocs();
         dd.coursename = coursename;
         dd.coursepath = coursepath;
         dd.uploaddate = uploaddate;
+        dd.des = des;
 
         DoctorDocsList.dl.add(dd);
       }
@@ -291,7 +293,15 @@ class UsefulDocsState extends State<UsefulDocs> {
                               DoctorDocsList.dl[index].coursename,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(DoctorDocsList.dl[index].uploaddate),
+                            subtitle: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(DoctorDocsList.dl[index].uploaddate),
+                                  DoctorDocsList.dl[index].des == 'Doctor'
+                                      ? Text("Doctor")
+                                      : Text("Student")
+                                ]),
                             onTap: () {
                               DocsPath.DocsPathName =
                                   DoctorDocsList.dl[index].coursepath;

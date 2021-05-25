@@ -156,7 +156,7 @@ class _ProfileState extends State<Profile> {
                             hintStyle: TextStyle(color: Colors.white)),
                         //  hintText:
                         textAlign: TextAlign.justify,
-                        textDirection: TextDirection.rtl,
+                        //  textDirection: TextDirection.rtl,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -179,13 +179,14 @@ class _ProfileState extends State<Profile> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
                         controller: pass,
+                        obscureText: true,
                         decoration: InputDecoration(
                             hintText: 'Password',
                             border: InputBorder.none,
                             hintStyle: TextStyle(color: Colors.white)),
                         //  hintText:
                         textAlign: TextAlign.justify,
-                        textDirection: TextDirection.rtl,
+                        //textDirection: TextDirection.rtl,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -214,7 +215,7 @@ class _ProfileState extends State<Profile> {
                             hintStyle: TextStyle(color: Colors.white)),
                         //  hintText:
                         textAlign: TextAlign.justify,
-                        textDirection: TextDirection.rtl,
+                        //textDirection: TextDirection.rtl,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -263,27 +264,154 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            ),
-            iconSize: 20.0,
-            onPressed: () {
-              Navigator.pop(context);
-            },
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
           ),
-          backgroundColor: Theme.of(context).primaryColor,
-          title: new Text(
-            "Profile",
-            style: TextStyle(color: Colors.white),
-          ),
+          iconSize: 20.0,
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: SingleChildScrollView(child: profileView()));
+        backgroundColor: Theme.of(context).primaryColor,
+        title: new Text(
+          "Profile",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      body: Container(
+          width: double.infinity,
+          height: size.height,
+          child: Stack(alignment: Alignment.center, children: <Widget>[
+            // Positioned(
+            //   top: 0,
+            //   right: 0,
+            //   child: Image.asset("assets/top1.png", width: size.width),
+            // ),
+            // Positioned(
+            //   top: 0,
+            //   right: 0,
+            //   child: Image.asset("assets/top2.png", width: size.width),
+            // ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Image.asset("assets/13.jpg", width: size.width * 0.4),
+            ),
+
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    "Your profile",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.indigo[800],
+                        fontSize: 36),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                SizedBox(height: size.height * 0.03),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: 40),
+                  child: TextField(
+                    controller: phoneCont,
+                    decoration: InputDecoration(
+                        hintText: 'Email.',
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(color: Colors.white)),
+                    //  hintText:
+                    textAlign: TextAlign.justify,
+                    //  textDirection: TextDirection.rtl,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                SizedBox(height: size.height * 0.03),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: 40),
+                  child: TextField(
+                    controller: pass,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        hintText: 'Password',
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(color: Colors.white)),
+                    //  hintText:
+                    textAlign: TextAlign.justify,
+                    //textDirection: TextDirection.rtl,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                SizedBox(height: size.height * 0.03),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: 40),
+                  child: TextField(
+                    controller: otherCont,
+                    decoration: InputDecoration(
+                        hintText: 'Other detail',
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(color: Colors.white)),
+                    //  hintText:
+                    textAlign: TextAlign.justify,
+                    //textDirection: TextDirection.rtl,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                SizedBox(height: size.height * 0.05),
+                Container(
+                  alignment: Alignment.centerRight,
+                  margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                  child: RaisedButton(
+                    onPressed: () {
+                      updateProfile(phoneCont.text, pass.text, otherCont.text);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(80.0)),
+                    textColor: Colors.white,
+                    padding: const EdgeInsets.all(0),
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 50.0,
+                      width: size.width * 0.5,
+                      decoration: new BoxDecoration(
+                          borderRadius: BorderRadius.circular(80.0),
+                          gradient: new LinearGradient(colors: [
+                            Colors.indigo[800],
+                            Colors.indigo[800]
+                          ])),
+                      padding: const EdgeInsets.all(0),
+                      child: Text(
+                        "Update",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // ListView(children: [
+            //GestureDetector(
+
+            //child:
+            //profileView()
+            //)
+            //])
+          ])),
+    );
   }
 }

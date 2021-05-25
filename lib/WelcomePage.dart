@@ -11,6 +11,7 @@ import 'LoginData.dart';
 import 'HomePageDoctor.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'UserDta.dart';
+import 'adminHome.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
@@ -280,7 +281,13 @@ class _WelcomePageState extends State<WelcomePage> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => new HomePageDoctor()));
       } else {
-        print("admin view");
+        if (UserDta.username == 'Changed') {
+          UserDta.checked = true;
+        } else {
+          UserDta.checked = false;
+        }
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => new adminHome()));
       }
     }
   }

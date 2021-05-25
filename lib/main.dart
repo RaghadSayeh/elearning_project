@@ -7,8 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'testCC.dart';
 import 'testSta.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  await Firebase.initializeApp();
   initializeDateFormatting().then((_) => runApp(new MyApp()));
 }
 

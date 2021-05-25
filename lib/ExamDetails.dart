@@ -173,28 +173,28 @@ class _ExamDetailsState extends State<ExamDetails> {
                                 ],
                               )),
                           SizedBox(height: 10),
-                          Container(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  new Text("Other info:",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white)),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  new Text(
-                                    ExamDetlPass.otherinfo,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
-                                ],
-                              )),
+                          // Container(
+                          //     width: MediaQuery.of(context).size.width * 0.8,
+                          //     child: Row(
+                          //       mainAxisAlignment: MainAxisAlignment.center,
+                          //       children: [
+                          //         new Text("Other info:",
+                          //             style: TextStyle(
+                          //                 fontSize: 17,
+                          //                 fontWeight: FontWeight.bold,
+                          //                 color: Colors.white)),
+                          //         SizedBox(
+                          //           width: 10,
+                          //         ),
+                          //         new Text(
+                          //           ExamDetlPass.otherinfo,
+                          //           style: TextStyle(
+                          //               fontSize: 17,
+                          //               fontWeight: FontWeight.bold,
+                          //               color: Colors.white),
+                          //         ),
+                          //       ],
+                          //     )),
                         ],
                       ),
                     ),

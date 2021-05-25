@@ -51,203 +51,6 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
           setState(() {
             print("item submitted");
             searchTextField.textField.controller.text = item.coursename;
-            // int count = 1; //CourseList.cl.length;
-            // //   CourseList.cl = new List();
-            // Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0)
-            //     .animate(CurvedAnimation(
-            //         parent: animationController,
-            //         curve: Interval((1 / count) * 1, 1.0,
-            //             curve: Curves.fastOutSlowIn)));
-            // animationController.forward();
-            // return AnimatedBuilder(
-            //   animation: animationController,
-            //   builder: (BuildContext context, Widget child) {
-            //     return FadeTransition(
-            //       opacity: animation,
-            //       child: Transform(
-            //         transform: Matrix4.translationValues(
-            //             0.0, 50 * (1.0 - animation.value), 0.0),
-            //         child: Padding(
-            //           padding: const EdgeInsets.only(
-            //               left: 24, right: 24, top: 8, bottom: 16),
-            //           child: InkWell(
-            //             splashColor: Colors.transparent,
-            //             onTap: () {
-            //               //  callback();
-            //             },
-            //             child: Container(
-            //               decoration: BoxDecoration(
-            //                 color:
-            //                     HotelAppTheme.buildLightTheme().backgroundColor,
-            //                 borderRadius: const BorderRadius.all(
-            //                   Radius.circular(38.0),
-            //                 ),
-            //                 boxShadow: <BoxShadow>[
-            //                   BoxShadow(
-            //                       color: Colors.grey.withOpacity(0.2),
-            //                       offset: const Offset(0, 2),
-            //                       blurRadius: 8.0),
-            //                 ],
-            //               ),
-            //               // decoration: BoxDecoration(
-            //               //   borderRadius:
-            //               //       const BorderRadius.all(Radius.circular(16.0)),
-            //               //   boxShadow: <BoxShadow>[
-            //               //     BoxShadow(
-            //               //       color: Colors.grey.withOpacity(0.6),
-            //               //       offset: const Offset(4, 4),
-            //               //       blurRadius: 16,
-            //               //     ),
-            //               //   ],
-            //               // ),
-            //               child: ClipRRect(
-            //                 borderRadius:
-            //                     const BorderRadius.all(Radius.circular(16.0)),
-            //                 child: Stack(
-            //                   children: <Widget>[
-            //                     Column(
-            //                       children: <Widget>[
-            //                         AspectRatio(
-            //                           aspectRatio: 2,
-            //                           child: Image.asset(
-            //                             'assets/logo1.jpg',
-            //                             fit: BoxFit.cover,
-            //                           ),
-            //                         ),
-            //                         Container(
-            //                           color: HotelAppTheme.buildLightTheme()
-            //                               .backgroundColor,
-            //                           child: Row(
-            //                             mainAxisAlignment:
-            //                                 MainAxisAlignment.center,
-            //                             crossAxisAlignment:
-            //                                 CrossAxisAlignment.start,
-            //                             children: <Widget>[
-            //                               Expanded(
-            //                                 child: Container(
-            //                                   child: Padding(
-            //                                     padding: const EdgeInsets.only(
-            //                                         left: 16,
-            //                                         top: 20,
-            //                                         bottom: 20),
-            //                                     child: Column(
-            //                                       mainAxisAlignment:
-            //                                           MainAxisAlignment.center,
-            //                                       crossAxisAlignment:
-            //                                           CrossAxisAlignment.start,
-            //                                       children: <Widget>[
-            //                                         Text(
-            //                                           item.coursename,
-            //                                           textAlign: TextAlign.left,
-            //                                           style: TextStyle(
-            //                                             fontWeight:
-            //                                                 FontWeight.w600,
-            //                                             fontSize: 22,
-            //                                           ),
-            //                                         ),
-            //                                         Row(
-            //                                           mainAxisAlignment:
-            //                                               MainAxisAlignment
-            //                                                   .spaceBetween,
-            //                                           children: <Widget>[
-            //                                             Text(
-            //                                               item.coursetime,
-            //                                               style: TextStyle(
-            //                                                   fontSize: 14,
-            //                                                   fontWeight:
-            //                                                       FontWeight
-            //                                                           .bold,
-            //                                                   color:
-            //                                                       Colors.black),
-            //                                             ),
-            //                                             const SizedBox(
-            //                                               width: 4,
-            //                                             ),
-            //                                           ],
-            //                                         ),
-            //                                         Padding(
-            //                                           padding:
-            //                                               const EdgeInsets.only(
-            //                                                   top: 4,
-            //                                                   right: 15),
-            //                                           child: Row(
-            //                                             mainAxisAlignment:
-            //                                                 MainAxisAlignment
-            //                                                     .end,
-            //                                             children: <Widget>[
-            //                                               Text(
-            //                                                 item.courseday,
-            //                                                 style: TextStyle(
-            //                                                     fontSize: 14,
-            //                                                     color: Colors
-            //                                                         .black),
-            //                                               ),
-            //                                             ],
-            //                                           ),
-            //                                         ),
-            //                                       ],
-            //                                     ),
-            //                                   ),
-            //                                 ),
-            //                               ),
-            //                             ],
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                     Positioned(
-            //                       top: 8,
-            //                       right: 8,
-            //                       child: Material(
-            //                         color: Colors.transparent,
-            //                         child: InkWell(
-            //                           borderRadius: const BorderRadius.all(
-            //                             Radius.circular(32.0),
-            //                           ),
-            //                           onTap: () {
-            //                             print(
-            //                                 "you are unable to register any course");
-            //                             // registerCourse(
-            //                             //     CourseList
-            //                             //         .cl[
-            //                             //             index]
-            //                             //         .coursename,
-            //                             //     CourseList
-            //                             //         .cl[
-            //                             //             index]
-            //                             //         .courseday,
-            //                             //     CourseList
-            //                             //         .cl[
-            //                             //             index]
-            //                             //         .coursetime,
-            //                             //     CourseList
-            //                             //         .cl[index]
-            //                             //         .drofficehrs);
-            //                             showAlertDialog(context);
-            //                           },
-            //                           child: Padding(
-            //                             padding: const EdgeInsets.all(8.0),
-            //                             child: Icon(
-            //                               Icons.add,
-            //                               size: 40,
-            //                               color: HotelAppTheme.buildLightTheme()
-            //                                   .primaryColor,
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ),
-            //                     )
-            //                   ],
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // );
-            //CourseList.cl = new List();
           });
         },
         clearOnSubmit: true,
@@ -292,17 +95,6 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
                                 blurRadius: 8.0),
                           ],
                         ),
-                        // decoration: BoxDecoration(
-                        //   borderRadius:
-                        //       const BorderRadius.all(Radius.circular(16.0)),
-                        //   boxShadow: <BoxShadow>[
-                        //     BoxShadow(
-                        //       color: Colors.grey.withOpacity(0.6),
-                        //       offset: const Offset(4, 4),
-                        //       blurRadius: 16,
-                        //     ),
-                        //   ],
-                        // ),
                         child: ClipRRect(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(16.0)),
@@ -405,10 +197,14 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
                                       Radius.circular(32.0),
                                     ),
                                     onTap: () {
-                                      print(
-                                          "you are unable to register any course");
-                                      _showSnackBarMag(
-                                          "You are unable to register course now...wait until registration time.");
+                                      enabled == true
+                                          ? registerCourse(
+                                              item.coursename,
+                                              item.courseday,
+                                              item.coursetime,
+                                              item.drofficehrs)
+                                          : _showSnackBarMag(
+                                              "You are unable to register course now...wait until registration time.");
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -441,6 +237,32 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
         });
 
     super.initState();
+  }
+
+  bool enabled = false;
+  Future getEnabled() async {
+    var url = 'https://crenelate-intervals.000webhostapp.com/getEnabled.php';
+    print("the data is");
+
+    var response = await http.post(url);
+
+    print("status code is");
+    print(response.statusCode);
+    // print(json.decode(response.body));
+
+    final res = json.decode(response.body);
+
+    if (res == 'Failed to get enabled value') {
+      print("Failed to get enabled value");
+    } else {
+      print("get enabled value successfully");
+      if (res == 'notChanged') {
+        enabled = false;
+      } else {
+        enabled = true;
+      }
+      setState(() {});
+    }
   }
 
   Future getCourses() async {
@@ -477,10 +299,10 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
         cd.drofficehrs = officehrs;
 
         CourseList.cl.add(cd);
-        print("student course length is");
-        print(CourseList.cl.length.toString());
       }
-      setState(() {});
+      setState(() {
+        getEnabled();
+      });
     }
   }
 
@@ -759,29 +581,26 @@ class _DocCoursesRegistrationState extends State<DocCoursesRegistration>
                                                                     32.0),
                                                               ),
                                                               onTap: () {
-                                                                //this is just temporary until enabled by The admin
-                                                                print(
-                                                                    "you are unable to register any course");
-                                                                // registerCourse(
-                                                                //     CourseList
-                                                                //         .cl[
-                                                                //             index]
-                                                                //         .coursename,
-                                                                //     CourseList
-                                                                //         .cl[
-                                                                //             index]
-                                                                //         .courseday,
-                                                                //     CourseList
-                                                                //         .cl[
-                                                                //             index]
-                                                                //         .coursetime,
-                                                                //     CourseList
-                                                                //         .cl[index]
-                                                                //         .drofficehrs);
-                                                                // showAlertDialog(
-                                                                //     context);
-                                                                _showSnackBarMag(
-                                                                    "You are unable to register course now...wait until registration time.");
+                                                                enabled == true
+                                                                    ? registerCourse(
+                                                                        CourseList
+                                                                            .cl[
+                                                                                index]
+                                                                            .coursename,
+                                                                        CourseList
+                                                                            .cl[
+                                                                                index]
+                                                                            .courseday,
+                                                                        CourseList
+                                                                            .cl[
+                                                                                index]
+                                                                            .coursetime,
+                                                                        CourseList
+                                                                            .cl[
+                                                                                index]
+                                                                            .drofficehrs)
+                                                                    : _showSnackBarMag(
+                                                                        "You are unable to register course now...wait until registration time.");
                                                               },
                                                               child: Padding(
                                                                 padding:

@@ -74,11 +74,13 @@ class DoctorSlidesState extends State<DoctorSlides> {
         String coursepath = doclist['path'];
         String coursename = doclist['coursename'];
         String uploaddate = doclist['uploaddate'];
+        String des = doclist['des'];
 
         DoctorDocs dd = new DoctorDocs();
         dd.coursename = coursename;
         dd.coursepath = coursepath;
         dd.uploaddate = uploaddate;
+        dd.des = des;
 
         DoctorDocsList.dl.add(dd);
       }

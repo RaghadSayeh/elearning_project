@@ -7,4 +7,5 @@ class UserDta {
   static String otherinfo = "";
   static String email = "";
   static String checkpushidAppearance = "";
+  static bool checked = false;
 }
