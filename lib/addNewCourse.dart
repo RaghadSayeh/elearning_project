@@ -270,18 +270,19 @@ class _addNewCourseState extends State<addNewCourse> {
           BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
-        currentIndex: 2,
+        currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new adminHome()))
-              : value == 1
-                  ? Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => new adminchat()))
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          if (value == 0) {
+            //await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new adminHome()));
+          } else if (value == 1) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new adminchat()));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

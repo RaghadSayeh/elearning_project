@@ -12,6 +12,9 @@ import 'HomePageDoctor.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'UserDta.dart';
 import 'adminHome.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
@@ -36,7 +39,26 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
     print("welcome page");
     loadData();
+    //signInWithEmailAndPassword();
   }
+
+  Future signInWithEmailAndPassword() async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: "hanal@gmail.com", password: "98765432");
+      print("the user credential is :");
+      print(result.user);
+      User uu = result.user;
+      print("email credential is");
+      print(uu.uid);
+      print(uu.email);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool seen = false;
   void loadData() async {

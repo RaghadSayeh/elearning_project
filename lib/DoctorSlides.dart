@@ -16,6 +16,7 @@ import 'DoctorDocsList.dart';
 import 'DocsViewer.dart';
 import 'DocsPath.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DoctorSlides extends StatefulWidget {
   DoctorSlidesState createState() => DoctorSlidesState();
@@ -418,23 +419,22 @@ class DoctorSlidesState extends State<DoctorSlides> {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new HomePageDoctor()))
-              : value == 1
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DoctorNotificationPage()))
-                  : value == 2
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new DoctorChatPage()))
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new WelcomePage()));
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new HomePageDoctor()));
+          } else if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new DoctorNotificationPage()));
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new DoctorChatPage()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

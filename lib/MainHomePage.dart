@@ -14,6 +14,9 @@ import 'Profile.dart';
 import 'StudentExams.dart';
 import 'StudentResults.dart';
 import 'Vacations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MainHomePage extends StatefulWidget {
   @override
@@ -21,6 +24,7 @@ class MainHomePage extends StatefulWidget {
 }
 
 class MainHomePageState extends State<MainHomePage> {
+  SharedPreferences sh;
   List<String> paths = [
     'HomePageStudent',
     'Courses',
@@ -64,7 +68,30 @@ class MainHomePageState extends State<MainHomePage> {
   void initState() {
     super.initState();
     print("Main homepage");
+    signInWithEmailAndPassword();
   }
+
+  Future signInWithEmailAndPassword() async {
+    try {
+      //"hanal@gmail.com"
+      sh = await SharedPreferences.getInstance();
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: UserDta.email, password: UserDta.pass); //"98765432"
+      print("the user credential is :");
+      print(result.user);
+      User uu = result.user;
+      print("email credential is");
+      print(uu.uid);
+      print(uu.email);
+      sh.setString("uid", uu.uid);
+      UserDta.uid = uu.uid;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -193,18 +220,20 @@ class MainHomePageState extends State<MainHomePage> {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 1
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new NotificationPage()))
-              : value == 2
-                  ? Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => new ChatPage()))
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new NotificationPage()));
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new ChatPage()));
+          } else if (value == 0) {
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

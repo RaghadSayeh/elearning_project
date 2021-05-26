@@ -8,4 +8,6 @@ class UserDta {
   static String email = "";
   static String checkpushidAppearance = "";
   static bool checked = false;
+  static String uid = "";
+  static String peerid = "";
 }

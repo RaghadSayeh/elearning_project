@@ -7,6 +7,7 @@ import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
 import 'HomePageDoctor.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 List<Appointment> appointmentFromJson(String str) => List<Appointment>.from(
     json.decode(str).map((x) => Appointment.fromJson(x)));
@@ -70,8 +71,9 @@ class DoctorLeavesVaca extends StatefulWidget {
   DoctorLeavesVacaState createState() => DoctorLeavesVacaState();
 }
 
-class DoctorLeavesVacaState extends State<DoctorLeavesVaca>with TickerProviderStateMixin {
-   var _calendarController;
+class DoctorLeavesVacaState extends State<DoctorLeavesVaca>
+    with TickerProviderStateMixin {
+  var _calendarController;
   Map<DateTime, List> _events;
   List<Appointment> _samemonthevents = List<Appointment>();
   AnimationController _animationController;
@@ -182,27 +184,27 @@ class DoctorLeavesVacaState extends State<DoctorLeavesVaca>with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Colors.white,
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          backgroundColor: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(30),
-            ),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              new Text(
-                "Formal vacations",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            backgroundColor: Theme.of(context).primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(30),
               ),
-            ],
-          )),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                new Text(
+                  "Formal vacations",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ],
+            )),
         body: Builder(builder: (BuildContext context) {
           return Column(children: <Widget>[
             _buildTableCalendarWithBuilders(),
@@ -262,7 +264,6 @@ class DoctorLeavesVacaState extends State<DoctorLeavesVaca>with TickerProviderSt
         todayDayBuilder: (context, date, _) {
           return Container(
             margin: const EdgeInsets.all(4.0),
-
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -309,7 +310,6 @@ class DoctorLeavesVacaState extends State<DoctorLeavesVaca>with TickerProviderSt
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.all(4.0),
-    
       alignment: Alignment.center,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(36.0),
@@ -331,88 +331,86 @@ class DoctorLeavesVacaState extends State<DoctorLeavesVaca>with TickerProviderSt
         element.date.month == current.month);
 
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(27.0),
-          child: AppBar(
-            centerTitle: true,
-            title: Text("Vacations of Current Month",
-                style: TextStyle(color: Colors.indigo[800], fontSize: 18)),
-            backgroundColor: Colors.white,
-            brightness: Brightness.light,
-            automaticallyImplyLeading: false,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(27.0),
+        child: AppBar(
+          centerTitle: true,
+          title: Text("Vacations of Current Month",
+              style: TextStyle(color: Colors.indigo[800], fontSize: 18)),
+          backgroundColor: Colors.white,
+          brightness: Brightness.light,
+          automaticallyImplyLeading: false,
 //          backgroundColor: Color(0x44000000),
-            elevation: 0.5,
-          ),
+          elevation: 0.5,
         ),
-        body: (_samemontheventsFilter.length == 0)
-            ? Center(
-              child:Text("No vacations record in current month!",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black, fontSize: 18))
-            )
-            : ListView(
-                children: _samemontheventsFilter
-                    .map((event) => Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 2.0),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4.0),
-                              padding:const EdgeInsets.all(7.0),
-                        child: (event is Appointment)
-                            ? ListTile(
-                                leading: SizedBox(
-                                  width: 90,
-                                  child: Column(children: <Widget>[
-                                    Text(
-                                        DateFormat('EE').format(event.date) +
-                                            '  ' +
-                                            DateFormat.MMMd()
-                                                .format(event.date),
-                                        style: TextStyle(
-                                          color: Colors.indigo[800].withOpacity(1.0),
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                    Text(DateFormat.jm().format(event.date),
-                                        textAlign: TextAlign.center,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.5,
-                                        )),
-                                  ]),
-                                ), 
-                                title: Text(event.title),
-                                onTap: () {
-                                  setState(() {});
-                                },
-                              )
-                            : null))
-                    .toList()),
-          bottomNavigationBar:
-          BottomNavigationBar(
+      ),
+      body: (_samemontheventsFilter.length == 0)
+          ? Center(
+              child: Text("No vacations record in current month!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black, fontSize: 18)))
+          : ListView(
+              children: _samemontheventsFilter
+                  .map((event) => Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2.0),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      padding: const EdgeInsets.all(7.0),
+                      child: (event is Appointment)
+                          ? ListTile(
+                              leading: SizedBox(
+                                width: 90,
+                                child: Column(children: <Widget>[
+                                  Text(
+                                      DateFormat('EE').format(event.date) +
+                                          '  ' +
+                                          DateFormat.MMMd().format(event.date),
+                                      style: TextStyle(
+                                        color:
+                                            Colors.indigo[800].withOpacity(1.0),
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                  Text(DateFormat.jm().format(event.date),
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.5,
+                                      )),
+                                ]),
+                              ),
+                              title: Text(event.title),
+                              onTap: () {
+                                setState(() {});
+                              },
+                            )
+                          : null))
+                  .toList()),
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new HomePageDoctor())):
-                   value == 1
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new DoctorNotificationPage()))
-              : value == 2
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DoctorChatPage()))
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          //await FirebaseAuth.instance.signOut();
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new HomePageDoctor()));
+          } else if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new DoctorNotificationPage()));
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new DoctorChatPage()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(
@@ -428,6 +426,6 @@ class DoctorLeavesVacaState extends State<DoctorLeavesVaca>with TickerProviderSt
               icon: Icon(Icons.logout), title: Text('Logout'))
         ],
       ),
-      );
+    );
   }
 }

@@ -4,25 +4,24 @@ import 'package:elearning_project/DoctorSlides.dart';
 import 'package:flutter/material.dart';
 import 'WelcomePage.dart';
 import 'UserDta.dart';
-import 'MeetingData.dart';
-import 'MeetingList.dart';
 import 'WelcomePage.dart';
 import 'DoctorChatPage.dart';
-import 'DoctorCoursesStud.dart';
 import 'DoctorNotifications.dart';
 import 'ContactadmDoctor.dart';
 import 'DoctorLeavesVaca.dart';
 import 'CoursesRegDoc.dart';
 import 'DoctorResults.dart';
 import 'DoctorProfile.dart';
-import 'hotel_home_screen.dart';
 import 'DoctorExams.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePageDoctor extends StatefulWidget {
   _HomePageDoctorState createState() => _HomePageDoctorState();
 }
 
 class _HomePageDoctorState extends State<HomePageDoctor> {
+  SharedPreferences sh;
   List<String> images = [
     'schedule.png',
     'meetings.jpg',
@@ -53,8 +52,31 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
   void initState() {
     super.initState();
     print("Main doctorhomepage");
+    signInWithEmailAndPassword();
   }
 
+  User uu;
+  Future signInWithEmailAndPassword() async {
+    try {
+      //"hanal@gmail.com"
+      sh = await SharedPreferences.getInstance();
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: UserDta.email, password: UserDta.pass); //"98765432"
+      print("the user credential is :");
+      print(result.user);
+      uu = result.user;
+      print("email credential is");
+      print(uu.uid);
+      print(uu.email);
+      sh.setString("uid", uu.uid.toString());
+      UserDta.uid = uu.uid;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,20 +199,21 @@ class _HomePageDoctorState extends State<HomePageDoctor> {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 1
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new DoctorNotificationPage()))
-              : value == 2
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DoctorChatPage()))
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          if (value == 1) {
+            //await FirebaseAuth.instance.signOut();
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new DoctorNotificationPage()));
+          } else if (value == 0) {
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new DoctorChatPage()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

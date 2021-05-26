@@ -9,6 +9,7 @@ import 'HomePageDoctor.dart';
 import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HotelHomeScreen extends StatefulWidget {
   @override
@@ -144,26 +145,26 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
             type: BottomNavigationBarType.fixed,
             currentIndex: 0,
             onTap: (value) async {
-              value == 0
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new HomePageDoctor()))
-                  : value == 1
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  new DoctorNotificationPage()))
-                      : value == 2
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new DoctorChatPage()))
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new WelcomePage()));
+              if (value == 0) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new HomePageDoctor()));
+              } else if (value == 1) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new DoctorNotificationPage()));
+              } else if (value == 2) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new DoctorChatPage()));
+              } else {
+                await FirebaseAuth.instance.signOut();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => new WelcomePage()));
+              }
             },
             items: [
               BottomNavigationBarItem(

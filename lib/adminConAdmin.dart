@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'UserDta.dart';
 import 'adminchat.dart';
 import 'adminHome.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'adminchat.dart';
 
 class ContactAdminAdmin extends StatefulWidget {
   ContactAdminAdminState createState() => ContactAdminAdminState();
@@ -133,27 +135,24 @@ class ContactAdminAdminState extends State<ContactAdminAdmin> {
           ),
         ),
       ),
-      bottomNavigationBar:
-          //  ClipRRect(
-          //   borderRadius: BorderRadius.only(
-          //     topLeft: Radius.circular(30.0),
-          //     topRight: Radius.circular(30.0),
-          //   ),
-          //   child:
-          BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new adminHome()))
-              : value == 1
-                  ? null
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          //            await FirebaseAuth.instance.signOut();
+
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new adminHome()));
+          } else if (value == 1) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new adminchat()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

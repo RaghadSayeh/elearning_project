@@ -11,6 +11,7 @@ import 'HomePageDoctor.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'UserDta.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ContactAdminDoctor extends StatefulWidget {
   ContactAdminDoctorState createState() => ContactAdminDoctorState();
@@ -143,23 +144,23 @@ class ContactAdminDoctorState extends State<ContactAdminDoctor> {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new HomePageDoctor()))
-              : value == 1
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DoctorNotificationPage()))
-                  : value == 2
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new DoctorChatPage()))
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new WelcomePage()));
+          //await FirebaseAuth.instance.signOut();
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new HomePageDoctor()));
+          } else if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new DoctorNotificationPage()));
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new DoctorChatPage()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'HomePageStudent.dart';
 import 'NotificationPage.dart';
 import 'WelcomePage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
@@ -94,22 +95,21 @@ class _SettingsPageState extends State<SettingsPage> {
         selectedItemColor: Colors.blue[300],
         currentIndex: 2,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new HomePageStudent()))
-              : value == 1
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new NotificationPage()))
-                  : value == 3
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new WelcomePage()))
-                      : null;
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new HomePageStudent()));
+          } else if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new NotificationPage()));
+          } else if (value == 3) {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          } else {
+            print("nothing");
+          }
         },
         items: [
           BottomNavigationBarItem(

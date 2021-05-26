@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -46,32 +47,25 @@ class Body extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar:
-          //  ClipRRect(
-          //   borderRadius: BorderRadius.only(
-          //     topLeft: Radius.circular(30.0),
-          //     topRight: Radius.circular(30.0),
-          //   ),
-          //   child:
-          BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 1
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => new DoctorNotificationPage()))
-              : value == 2
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DoctorChatPage()))
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          //await FirebaseAuth.instance.signOut();
+          if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new DoctorNotificationPage()));
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new DoctorChatPage()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

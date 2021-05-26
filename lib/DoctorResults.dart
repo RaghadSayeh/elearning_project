@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-
-//import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'DoctorChatPage.dart';
 import 'DoctorNotifications.dart';
 import 'WelcomePage.dart';
@@ -15,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'DoctorTable.dart';
 import 'DoctorsTabList.dart';
 import 'ExamsData.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DoctorResults extends StatefulWidget {
   DoctorResultsState createState() => DoctorResultsState();
@@ -340,23 +338,22 @@ class DoctorResultsState extends State<DoctorResults> {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new HomePageDoctor()))
-              : value == 1
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new DoctorNotificationPage()))
-                  : value == 2
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new DoctorChatPage()))
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new WelcomePage()));
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new HomePageDoctor()));
+          } else if (value == 1) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new DoctorNotificationPage()));
+          } else if (value == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new DoctorChatPage()));
+          } else {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(

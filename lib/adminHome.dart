@@ -10,16 +10,21 @@ import 'adminProfile.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'addNewCourse.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class adminHome extends StatefulWidget {
   _adminHomeState createState() => _adminHomeState();
 }
 
 class _adminHomeState extends State<adminHome> {
+  SharedPreferences sh;
+
   @override
   void initState() {
     super.initState();
     print("Main admin");
+    signInWithEmailAndPassword();
   }
 
   Future enableRegistration() async {
@@ -44,6 +49,27 @@ class _adminHomeState extends State<adminHome> {
     }
   }
 
+  Future signInWithEmailAndPassword() async {
+    try {
+      //"hanal@gmail.com"
+      sh = await SharedPreferences.getInstance();
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: UserDta.email, password: UserDta.pass); //"98765432"
+      print("the user credential is :");
+      print(result.user);
+      User uu = result.user;
+      print("email credential is");
+      print(uu.uid);
+      print(uu.email);
+      sh.setString("uid", uu.uid.toString());
+      UserDta.uid = uu.uid;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool enabled = false;
   @override
   Widget build(BuildContext context) {
@@ -224,15 +250,15 @@ class _adminHomeState extends State<adminHome> {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         onTap: (value) async {
-          value == 0
-              ? null
-              : value == 1
-                  ? Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => new adminchat()))
-                  : Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => new WelcomePage()));
+          //await FirebaseAuth.instance.signOut();
+          if (value == 0) {
+          } else if (value == 1) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new adminchat()));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new WelcomePage()));
+          }
         },
         items: [
           BottomNavigationBarItem(
